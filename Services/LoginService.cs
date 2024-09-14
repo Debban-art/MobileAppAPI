@@ -27,7 +27,7 @@ namespace reportesApi.Services
                 ArrayList parametros = new ArrayList();
                 parametros.Add(new SqlParameter { ParameterName = "@pUsuario", SqlDbType = SqlDbType.VarChar, Value = user });
                 parametros.Add(new SqlParameter { ParameterName = "@pPass", SqlDbType = SqlDbType.VarChar, Value = pass });
-                DataSet ds = dac.Fill("sp_login_pv", parametros);
+                DataSet ds = dac.Fill("sp_login", parametros);
                 if (ds.Tables[0].Rows.Count > 0)
                 {
                     foreach (DataRow row in ds.Tables[0].Rows)
