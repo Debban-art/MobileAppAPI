@@ -75,5 +75,26 @@ namespace reportesApi.Controllers
 
             return new JsonResult(objectResponse);
         }
+
+        [HttpPut("UpdateProveedor")]
+        public IActionResult UpdateProveedor([FromBody] UpdateProveedorModel req)
+        {
+            var objectResponse = Helper.GetStructResponse();
+            try
+            {
+                objectResponse.StatusCode = (int)HttpStatusCode.Created;
+                objectResponse.success = true;
+                objectResponse.message = "Proveedor actualizado con éxito" ;
+                _proveedorService.UpdateProveedor(req);
+            }
+            catch (Exception ex)
+            {
+                objectResponse.StatusCode = (int)HttpStatusCode.InternalServerError;
+                objectResponse.success = false;
+                objectResponse.message = ex.Message;
+            }
+
+            return new JsonResult(objectResponse);
+        }
     }
 }

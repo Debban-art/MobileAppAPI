@@ -37,7 +37,7 @@ namespace reportesApi.Services
             parametros.Add(new SqlParameter { ParameterName = "RFC", SqlDbType = SqlDbType.VarChar, Value = proveedor.Proveedor_RFC  });
             parametros.Add(new SqlParameter { ParameterName = "PlazoPago", SqlDbType = SqlDbType.Int, Value = proveedor.Proveedor_PlazoPago  });
             parametros.Add(new SqlParameter { ParameterName = "PorcentajeRetencion", SqlDbType = SqlDbType.Decimal, Value = proveedor.Proveedor_PorcentajeRetencion  });
-            parametros.Add(new SqlParameter { ParameterName = "UsuarioRegistra", SqlDbType = SqlDbType.VarChar, Value = proveedor.Usuario_Registra  });
+            parametros.Add(new SqlParameter { ParameterName = "UsuarioRegistra", SqlDbType = SqlDbType.Int, Value = proveedor.Usuario_Registra  });
 
             try
             {
@@ -87,6 +87,33 @@ namespace reportesApi.Services
 
             return lista;
         }
+
+        public void UpdateProveedor(UpdateProveedorModel proveedor)
+        {
+            ConexionDataAccess dac = new ConexionDataAccess(connection);
+            parametros = new ArrayList();
+            
+            parametros.Add(new SqlParameter { ParameterName = "Id", SqlDbType = SqlDbType.Int, Value = proveedor.Proveedor_Id  });
+            parametros.Add(new SqlParameter { ParameterName = "Nombre", SqlDbType = SqlDbType.VarChar, Value = proveedor.Proveedor_Nombre  });
+            parametros.Add(new SqlParameter { ParameterName = "Direccion", SqlDbType = SqlDbType.VarChar, Value = proveedor.Proveedor_Direccion  });
+            parametros.Add(new SqlParameter { ParameterName = "Email", SqlDbType = SqlDbType.VarChar, Value = proveedor.Proveedor_Email  });
+            parametros.Add(new SqlParameter { ParameterName = "RFC", SqlDbType = SqlDbType.VarChar, Value = proveedor.Proveedor_RFC  });
+            parametros.Add(new SqlParameter { ParameterName = "PlazoPago", SqlDbType = SqlDbType.Int, Value = proveedor.Proveedor_PlazoPago  });
+            parametros.Add(new SqlParameter { ParameterName = "PorcentajeRetencion", SqlDbType = SqlDbType.Decimal, Value = proveedor.Proveedor_PorcentajeRetencion  });
+            parametros.Add(new SqlParameter { ParameterName = "Estatus", SqlDbType = SqlDbType.Int, Value = proveedor.Proveedor_Estatus  });
+            parametros.Add(new SqlParameter { ParameterName = "UsuarioRegistra", SqlDbType = SqlDbType.Int, Value = proveedor.Usuario_Registra  });
+
+            try
+            {
+                DataSet ds = dac.Fill("sp_UpdateProveedor", parametros);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+        }
+
 
     }
 
