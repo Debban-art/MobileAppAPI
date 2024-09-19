@@ -49,5 +49,46 @@ namespace reportesApi.Services
                 throw ex;
             }
         }
+
+        public List<GetProveedoresModel> GetAllProveedores()
+        {
+            ConexionDataAccess dac = new ConexionDataAccess(connection);
+            parametros = new ArrayList();
+            List<GetProveedoresModel> lista = new List<GetProveedoresModel>();
+
+            try
+            {
+                DataSet ds = dac.Fill("sp_GetAllProveedores", parametros);
+                if(ds.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+                        lista.Add(new GetProveedoresModel
+                        {
+                            Proveedor_Id = int.Parse(dr["Id"].ToString()),
+                            Proveedor_Nombre = dr["Nombre"].ToString(),
+                            Proveedor_Direccion = dr["Direccion"].ToString(),
+                            Proveedor_Email = dr["Email"].ToString(),
+                            Proveedor_RFC = dr["RFC"].ToString(),
+                            Proveedor_PlazoPago = int.Parse(dr["PlazoPago"].ToString()),
+                            Proveedor_PorcentajeRetencion = float.Parse(dr["PorcentajeRetencion"].ToString()),
+                            Proveedor_Estatus = int.Parse(dr["Estatus"].ToString()),
+                            Usuario_Registra = dr["UsuarioRegistra"].ToString(),
+                            Fecha_Registro = dr["FechaRegistro"].ToString()
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+
+            return lista;
+        }
+
     }
+
+
 }
