@@ -96,5 +96,26 @@ namespace reportesApi.Controllers
 
             return new JsonResult(objectResponse);
         }
+
+        [HttpDelete("DeleteProveedor")]
+        public IActionResult DeleteProveedor([FromQuery] int Id)
+        {
+            var objectResponse = Helper.GetStructResponse();
+            try
+            {
+                objectResponse.StatusCode = (int)HttpStatusCode.Created;
+                objectResponse.success = true;
+                objectResponse.message = "Proveedor eliminado con éxito" ;
+                _proveedorService.DeleteProveedor(Id);
+            }
+            catch (Exception ex)
+            {
+                objectResponse.StatusCode = (int)HttpStatusCode.InternalServerError;
+                objectResponse.success = false;
+                objectResponse.message = ex.Message;
+            }
+
+            return new JsonResult(objectResponse);
+        }
     }
 }

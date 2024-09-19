@@ -114,6 +114,24 @@ namespace reportesApi.Services
             }
         }
 
+        public void DeleteProveedor(int Id)
+        {
+            ConexionDataAccess dac = new ConexionDataAccess(connection);
+            parametros = new ArrayList();
+            
+            parametros.Add(new SqlParameter { ParameterName = "Id", SqlDbType = SqlDbType.Int, Value = Id  });
+
+            try
+            {
+                DataSet ds = dac.Fill("sp_DeleteProveedor", parametros);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+        }
+
 
     }
 
