@@ -65,9 +65,7 @@ namespace reportesApi
             services.AddSingleton<AlumnoService>();
             services.AddSingleton<ProveedorService>();
             services.AddSingleton<AlmacenService>();
-
-
-
+            services.AddSingleton<InsumoService>();
 
 
             services.AddCors();
