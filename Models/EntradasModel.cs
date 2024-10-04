@@ -6,10 +6,7 @@ namespace reportesApi.Models
     {
         public int IdProveedor {get; set;}
         public int IdSucursal {get; set;}
-        public decimal Total {get; set;}
-        public string Insumo {get; set;}
-        public decimal Cantidad {get; set;}
-        public decimal Costo {get; set;}
+        public string Factura {get; set;}
         public int UsuarioRegistra {get; set;}
     }
 
@@ -19,6 +16,7 @@ namespace reportesApi.Models
         public string Proveedor {get; set;}
         public string Sucursal {get; set;}
         public decimal Total {get; set;}
+        public string Factura {get; set;}
         public string FechaEntrada {get; set;}
         public int Estatus {get; set;}
         public string FechaRegistro {get; set;}
@@ -31,7 +29,7 @@ namespace reportesApi.Models
         public int Id {get; set;}
          public int IdProveedor {get; set;}
         public int IdSucursal {get; set;}
-        public decimal Total {get; set;}
+        public string Factura {get; set;}   
         public int Estatus {get; set;}
         public int UsuarioRegistra {get; set;}
     }

@@ -42,7 +42,7 @@ namespace reportesApi.Controllers
                 objectResponse.StatusCode = (int)HttpStatusCode.Created;
                 objectResponse.success = true;
                 objectResponse.message = "Entrada registrado con éxito" ;
-                _entradaService.InsertEntrada(req);
+                objectResponse.response =_entradaService.InsertEntrada(req);
             }
             catch (Exception ex)
             {

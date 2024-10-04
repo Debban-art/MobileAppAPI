@@ -1,5 +1,13 @@
 namespace reportesApi.Models
 {
+    public class InsertDetallesEntradaModel
+    {
+        public int IdEntrada {get; set;}
+        public string Insumo {get; set;}
+        public decimal Cantidad {get; set;}
+        public decimal Costo {get; set;}
+        public int UsuarioRegistra {get; set;}
+    }
     public class GetDetallesEntradaModel
     {
         public int Id {get; set;}
@@ -16,6 +24,7 @@ namespace reportesApi.Models
     public class UpdateDetallesEntradaModel
     {
         public int Id {get; set;}
+        public int IdEntrada {get; set;}
         public string Insumo {get; set;}
         public decimal Cantidad {get; set;}
         public decimal Costo {get; set;}

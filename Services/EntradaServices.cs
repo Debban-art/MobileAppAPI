@@ -46,6 +46,7 @@ namespace reportesApi.Services
                         Proveedor = dataRow["Proveedor"].ToString(),
                         Sucursal = dataRow["Sucursal"].ToString(),
                         Total = decimal.Parse(dataRow["Total"].ToString()),
+                        Factura = dataRow["Factura"].ToString(),
                         FechaEntrada = dataRow["FechaEntrada"].ToString(),
                         Estatus = int.Parse(dataRow["Estatus"].ToString()),
                         UsuarioRegistra = dataRow["UsuarioRegistra"].ToString(),
@@ -61,28 +62,30 @@ namespace reportesApi.Services
             return lista;
         }
 
-        public void InsertEntrada(InsertEntradaModel Entrada)
+        public int InsertEntrada(InsertEntradaModel Entrada)
         {
+            int IdEntrada;
             ConexionDataAccess dac = new ConexionDataAccess(connection);
             parametros = new ArrayList();
 
             parametros.Add(new SqlParameter { ParameterName = "@IdProveedor", SqlDbType = System.Data.SqlDbType.Int, Value = Entrada.IdProveedor });
             parametros.Add(new SqlParameter { ParameterName = "@IdSucursal", SqlDbType = System.Data.SqlDbType.Int, Value = Entrada.IdSucursal});
-            parametros.Add(new SqlParameter { ParameterName = "@Total", SqlDbType = System.Data.SqlDbType.Decimal, Value = Entrada.Total});
-            parametros.Add(new SqlParameter { ParameterName = "@Insumo", SqlDbType = System.Data.SqlDbType.VarChar, Value = Entrada.Insumo});
-            parametros.Add(new SqlParameter { ParameterName = "@Cantidad", SqlDbType = System.Data.SqlDbType.Decimal, Value = Entrada.Cantidad});
-            parametros.Add(new SqlParameter { ParameterName = "@Costo", SqlDbType = System.Data.SqlDbType.Decimal, Value = Entrada.Costo});
+            parametros.Add(new SqlParameter { ParameterName = "@Factura", SqlDbType = System.Data.SqlDbType.VarChar, Value = Entrada.Factura});
             parametros.Add(new SqlParameter { ParameterName = "@UsuarioRegistra", SqlDbType = System.Data.SqlDbType.Int, Value = Entrada.UsuarioRegistra });
 
             try
             {
                 DataSet ds = dac.Fill("sp_InsertEntrada", parametros);
+                IdEntrada = ds.Tables[0].AsEnumerable().Select(dataRow => int.Parse(dataRow["IdEntrada"].ToString())).ToList()[0];
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw ex;
             }
+
+            return IdEntrada;
         }
 
         public void UpdateEntrada(UpdateEntradaModel Entrada)
@@ -93,7 +96,6 @@ namespace reportesApi.Services
             parametros.Add(new SqlParameter { ParameterName = "@Id", SqlDbType = System.Data.SqlDbType.Int, Value = Entrada.Id });
             parametros.Add(new SqlParameter { ParameterName = "@IdProveedor", SqlDbType = System.Data.SqlDbType.Int, Value = Entrada.IdProveedor });
             parametros.Add(new SqlParameter { ParameterName = "@IdSucursal", SqlDbType = System.Data.SqlDbType.Int, Value = Entrada.IdSucursal});
-            parametros.Add(new SqlParameter { ParameterName = "@Total", SqlDbType = System.Data.SqlDbType.Decimal, Value = Entrada.Total});
             parametros.Add(new SqlParameter { ParameterName = "@Estatus", SqlDbType = System.Data.SqlDbType.Int, Value = Entrada.Estatus});
             parametros.Add(new SqlParameter { ParameterName = "@UsuarioRegistra", SqlDbType = System.Data.SqlDbType.Int, Value = Entrada.UsuarioRegistra });
 

@@ -26,11 +26,33 @@ namespace reportesApi.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-
-        public List<GetDetallesEntradaModel> GetDetallesEntradas()
+        public void InsertDetallesEntrada(InsertDetallesEntradaModel DetallesEntrada)
         {
             ConexionDataAccess dac = new ConexionDataAccess(connection);
             parametros = new ArrayList();
+
+            parametros.Add(new SqlParameter { ParameterName = "@IdEntrada", SqlDbType = System.Data.SqlDbType.Int, Value = DetallesEntrada.IdEntrada});
+            parametros.Add(new SqlParameter { ParameterName = "@Insumo", SqlDbType = System.Data.SqlDbType.VarChar, Value = DetallesEntrada.Insumo});
+            parametros.Add(new SqlParameter { ParameterName = "@Cantidad", SqlDbType = System.Data.SqlDbType.Decimal, Value = DetallesEntrada.Cantidad});
+            parametros.Add(new SqlParameter { ParameterName = "@Costo", SqlDbType = System.Data.SqlDbType.Decimal, Value = DetallesEntrada.Costo});
+            parametros.Add(new SqlParameter { ParameterName = "@UsuarioRegistra", SqlDbType = System.Data.SqlDbType.Int, Value = DetallesEntrada.UsuarioRegistra });
+
+            try
+            {
+                DataSet ds = dac.Fill("sp_InsertDetallesEntrada", parametros);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+        }
+
+        public List<GetDetallesEntradaModel> GetDetallesEntradas(int IdEntrada)
+        {
+            ConexionDataAccess dac = new ConexionDataAccess(connection);
+            parametros = new ArrayList();
+            parametros.Add(new SqlParameter {ParameterName = "IdEntrada", SqlDbType = SqlDbType.Int, Value = IdEntrada});
             List<GetDetallesEntradaModel> lista = new List<GetDetallesEntradaModel>();
 
             try
@@ -70,6 +92,7 @@ namespace reportesApi.Services
             parametros = new ArrayList();
             
             parametros.Add(new SqlParameter { ParameterName = "@Id", SqlDbType = System.Data.SqlDbType.Int, Value = detallesEntrada.Id });
+            parametros.Add(new SqlParameter { ParameterName = "@IdEntrada", SqlDbType = System.Data.SqlDbType.Int, Value = detallesEntrada.IdEntrada});
             parametros.Add(new SqlParameter { ParameterName = "@Insumo", SqlDbType = System.Data.SqlDbType.VarChar, Value = detallesEntrada.Insumo});
             parametros.Add(new SqlParameter { ParameterName = "@Cantidad", SqlDbType = System.Data.SqlDbType.Decimal, Value = detallesEntrada.Cantidad});
             parametros.Add(new SqlParameter { ParameterName = "@Costo", SqlDbType = System.Data.SqlDbType.Decimal, Value = detallesEntrada.Costo});

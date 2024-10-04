@@ -32,10 +32,31 @@ namespace reportesApi.Controllers
             _logger = logger;
             _authService = authService;
         }
+
+        [HttpPost("InsertDetallesEntrada")]
+        public IActionResult InsertDetallesEntrada([FromBody] InsertDetallesEntradaModel req)
+        {
+            var objectResponse = Helper.GetStructResponse();
+            try
+            {
+                objectResponse.StatusCode = (int)HttpStatusCode.Created;
+                objectResponse.success = true;
+                objectResponse.message = "Entrada registrado con éxito" ;
+                _detallesEntradaService.InsertDetallesEntrada(req);
+            }
+            catch (Exception ex)
+            {
+                objectResponse.StatusCode = (int)HttpStatusCode.InternalServerError;
+                objectResponse.success = false;
+                objectResponse.message = ex.Message;
+            }
+
+            return new JsonResult(objectResponse);
+        }
             
 
-        [HttpGet("GetAllDetallesEntradas")]
-        public IActionResult GetAllDetallesEntradaes()
+        [HttpGet("GetDetallesEntradas")]
+        public IActionResult GetDetallesEntradaes([FromQuery] int IdEntrada)
         {
             var objectResponse = Helper.GetStructResponse();
             try
@@ -43,7 +64,7 @@ namespace reportesApi.Controllers
                 objectResponse.StatusCode = (int)HttpStatusCode.OK;
                 objectResponse.success = true;
                 objectResponse.message = "Detalles de Entradas obtenidos con éxito";
-                var resultado = _detallesEntradaService.GetDetallesEntradas();
+                var resultado = _detallesEntradaService.GetDetallesEntradas(IdEntrada);
                 objectResponse.response = resultado;
             }
             catch(Exception ex)
