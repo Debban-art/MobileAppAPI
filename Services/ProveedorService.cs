@@ -5,13 +5,8 @@ using System.Data.SqlClient;
 using reportesApi.DataContext;
 using reportesApi.Models;
 using System.Collections.Generic;
-using OfficeOpenXml;
 using Microsoft.AspNetCore.Hosting;
-using System.IO;
-using Microsoft.AspNetCore.Mvc;
-using System.Drawing.Printing;
-using System.Linq;
-using System.Text;
+
 namespace reportesApi.Services
 {
     public class ProveedorService

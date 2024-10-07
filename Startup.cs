@@ -68,6 +68,7 @@ namespace reportesApi
             services.AddSingleton<InsumoService>();
             services.AddSingleton<EntradaService>();
             services.AddSingleton<DetallesEntradaService>();
+            services.AddSingleton<RecetaService>();
 
 
             services.AddCors();

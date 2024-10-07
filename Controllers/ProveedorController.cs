@@ -2,15 +2,10 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using reportesApi.Services;
 using reportesApi.Utilities;
-using Microsoft.AspNetCore.Authorization;
 using reportesApi.Models;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using reportesApi.Helpers;
-using Newtonsoft.Json;
-using System.IO;
-using OfficeOpenXml;
-using OfficeOpenXml.Style;
 using Microsoft.AspNetCore.Hosting;
 
 namespace reportesApi.Controllers
