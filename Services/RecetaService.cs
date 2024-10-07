@@ -96,5 +96,23 @@ namespace reportesApi.Services
             }
         }
 
+        public void DeleteReceta(int Id)
+        {
+            ConexionDataAccess dac = new ConexionDataAccess(connection);
+            parametros = new ArrayList();
+            
+            parametros.Add(new SqlParameter { ParameterName = "Id", SqlDbType = SqlDbType.Int, Value = Id  });
+
+            try
+            {
+                DataSet ds = dac.Fill("sp_DeleteReceta", parametros);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+        }
+
     }
 }
