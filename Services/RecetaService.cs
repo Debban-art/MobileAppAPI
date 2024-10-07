@@ -40,6 +40,40 @@ namespace reportesApi.Services
             }
         }
 
+        public List<GetRecetasModel> GetRecetas()
+        {
+            ConexionDataAccess dac = new ConexionDataAccess(connection);
+            parametros = new ArrayList();
+            List<GetRecetasModel> lista = new List<GetRecetasModel>();
+
+            try
+            {
+                DataSet ds = dac.Fill("sp_GetRecetas", parametros);
+                if(ds.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+                        lista.Add(new GetRecetasModel
+                        {
+                            Id = int.Parse(dr["Id"].ToString()),
+                            Nombre = dr["Nombre"].ToString(),
+                            Fecha_Creacion = dr["FechaCreacion"].ToString(),
+                            Estatus = int.Parse(dr["Estatus"].ToString()),
+                            Usuario_Registra = dr["UsuarioRegistra"].ToString(),
+                            Fecha_Registro = dr["FechaRegistro"].ToString()
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+
+            return lista;
+        }
+
 
     }
 }
