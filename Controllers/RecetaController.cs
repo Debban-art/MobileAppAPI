@@ -71,6 +71,26 @@ namespace reportesApi.Controllers
             return new JsonResult(objectResponse);
         }
 
+        [HttpPut("UpdateReceta")]
+        public IActionResult UpdateReceta([FromBody] UpdateRecetaModel req)
+        {
+            var objectResponse = Helper.GetStructResponse();
+            try
+            {
+                objectResponse.StatusCode = (int)HttpStatusCode.Created;
+                objectResponse.success = true;
+                objectResponse.message = "Receta actualizada con éxito" ;
+                _recetaService.UpdateReceta(req);
+            }
+            catch (Exception ex)
+            {
+                objectResponse.StatusCode = (int)HttpStatusCode.InternalServerError;
+                objectResponse.success = false;
+                objectResponse.message = ex.Message;
+            }
+
+            return new JsonResult(objectResponse);
+        }
     }
 
     

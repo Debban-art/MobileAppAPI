@@ -74,6 +74,27 @@ namespace reportesApi.Services
             return lista;
         }
 
+        public void UpdateReceta(UpdateRecetaModel receta)
+        {
+            ConexionDataAccess dac = new ConexionDataAccess(connection);
+            parametros = new ArrayList();
+            
+            parametros.Add(new SqlParameter { ParameterName = "Id", SqlDbType = SqlDbType.VarChar, Value = receta.Id  });
+            parametros.Add(new SqlParameter { ParameterName = "Nombre", SqlDbType = SqlDbType.VarChar, Value = receta.Nombre  });
+            parametros.Add(new SqlParameter { ParameterName = "UsuarioRegistra", SqlDbType = SqlDbType.Int, Value = receta.Usuario_Registra  });
+            parametros.Add(new SqlParameter { ParameterName = "Estatus", SqlDbType = SqlDbType.Int, Value = receta.Estatus  });
+
+
+            try
+            {
+                dac.ExecuteNonQuery("sp_UpdateReceta", parametros);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+        }
 
     }
 }

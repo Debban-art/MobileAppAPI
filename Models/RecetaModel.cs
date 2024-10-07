@@ -15,4 +15,12 @@ namespace reportesApi.Models
         public string Usuario_Registra {get; set;}
         public string Fecha_Registro {get; set;}
     }
+
+    public class UpdateRecetaModel
+    {
+        public int Id {get; set;}
+        public string Nombre {get; set;}
+        public int Estatus {get; set;}
+        public int Usuario_Registra {get; set;}
+    }
 }
