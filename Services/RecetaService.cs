@@ -6,6 +6,7 @@ using reportesApi.Models;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Hosting;
 using System;
+using System.Linq;
 
 namespace reportesApi.Services
 {
@@ -21,8 +22,9 @@ namespace reportesApi.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public void InsertReceta(InsertRecetaModel receta)
+        public int InsertReceta(InsertRecetaModel receta)
         {
+            int IdReceta;
             ConexionDataAccess dac = new ConexionDataAccess(connection);
             parametros = new ArrayList();
             
@@ -31,13 +33,16 @@ namespace reportesApi.Services
 
             try
             {
-                dac.ExecuteNonQuery("sp_InsertReceta", parametros);
+                DataSet ds = dac.Fill("sp_InsertReceta", parametros);
+                IdReceta = ds.Tables[0].AsEnumerable().Select(dataRow => int.Parse(dataRow["IdReceta"].ToString())).ToList()[0];
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw ex;
             }
+
+            return IdReceta;
         }
 
         public List<GetRecetasModel> GetRecetas()

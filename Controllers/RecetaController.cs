@@ -37,7 +37,7 @@ namespace reportesApi.Controllers
                 objectResponse.StatusCode = (int)HttpStatusCode.Created;
                 objectResponse.success = true;
                 objectResponse.message = "Receta registrada con éxito" ;
-                _recetaService.InsertReceta(req);
+                objectResponse.response = _recetaService.InsertReceta(req);
             }
             catch (Exception ex)
             {
