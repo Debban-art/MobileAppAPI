@@ -70,6 +70,7 @@ namespace reportesApi
             services.AddSingleton<DetallesEntradaService>();
             services.AddSingleton<RecetaService>();
             services.AddSingleton<DetalleRecetaService>();
+            services.AddSingleton<OrdenCompraService>();
 
 
             services.AddCors();
