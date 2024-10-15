@@ -27,7 +27,7 @@ namespace reportesApi.Models
     public class UpdateEntradaModel
     {
         public int Id {get; set;}
-         public int IdProveedor {get; set;}
+        public int IdProveedor {get; set;}
         public int IdSucursal {get; set;}
         public string Factura {get; set;}   
         public int Estatus {get; set;}

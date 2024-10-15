@@ -72,6 +72,7 @@ namespace reportesApi.Services
             parametros.Add(new SqlParameter { ParameterName = "@IdSucursal", SqlDbType = System.Data.SqlDbType.Int, Value = Entrada.IdSucursal});
             parametros.Add(new SqlParameter { ParameterName = "@Factura", SqlDbType = System.Data.SqlDbType.VarChar, Value = Entrada.Factura});
             parametros.Add(new SqlParameter { ParameterName = "@UsuarioRegistra", SqlDbType = System.Data.SqlDbType.Int, Value = Entrada.UsuarioRegistra });
+            parametros.Add(new SqlParameter { ParameterName = "@Factura", SqlDbType = System.Data.SqlDbType.VarChar, Value = Entrada.Factura });
 
             try
             {
@@ -98,6 +99,7 @@ namespace reportesApi.Services
             parametros.Add(new SqlParameter { ParameterName = "@IdSucursal", SqlDbType = System.Data.SqlDbType.Int, Value = Entrada.IdSucursal});
             parametros.Add(new SqlParameter { ParameterName = "@Estatus", SqlDbType = System.Data.SqlDbType.Int, Value = Entrada.Estatus});
             parametros.Add(new SqlParameter { ParameterName = "@UsuarioRegistra", SqlDbType = System.Data.SqlDbType.Int, Value = Entrada.UsuarioRegistra });
+            parametros.Add(new SqlParameter { ParameterName = "@Factura", SqlDbType = System.Data.SqlDbType.VarChar, Value = Entrada.Factura });
 
             try
             {
