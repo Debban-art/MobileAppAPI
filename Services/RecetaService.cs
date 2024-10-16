@@ -6,6 +6,8 @@ using reportesApi.Models;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Hosting;
 using System;
+using System.IO;
+using OfficeOpenXml; // Asegúrate de que este using esté presente
 using System.Linq;
 
 namespace reportesApi.Services
@@ -28,8 +30,8 @@ namespace reportesApi.Services
             ConexionDataAccess dac = new ConexionDataAccess(connection);
             parametros = new ArrayList();
             
-            parametros.Add(new SqlParameter { ParameterName = "Nombre", SqlDbType = SqlDbType.VarChar, Value = receta.Nombre  });
-            parametros.Add(new SqlParameter { ParameterName = "UsuarioRegistra", SqlDbType = SqlDbType.Int, Value = receta.Usuario_Registra  });
+            parametros.Add(new SqlParameter { ParameterName = "Nombre", SqlDbType = SqlDbType.VarChar, Value = receta.Nombre });
+            parametros.Add(new SqlParameter { ParameterName = "UsuarioRegistra", SqlDbType = SqlDbType.Int, Value = receta.Usuario_Registra });
 
             try
             {
@@ -54,7 +56,7 @@ namespace reportesApi.Services
             try
             {
                 DataSet ds = dac.Fill("sp_GetRecetas", parametros);
-                if(ds.Tables[0].Rows.Count > 0)
+                if (ds.Tables[0].Rows.Count > 0)
                 {
                     foreach (DataRow dr in ds.Tables[0].Rows)
                     {
@@ -84,11 +86,10 @@ namespace reportesApi.Services
             ConexionDataAccess dac = new ConexionDataAccess(connection);
             parametros = new ArrayList();
             
-            parametros.Add(new SqlParameter { ParameterName = "Id", SqlDbType = SqlDbType.VarChar, Value = receta.Id  });
-            parametros.Add(new SqlParameter { ParameterName = "Nombre", SqlDbType = SqlDbType.VarChar, Value = receta.Nombre  });
-            parametros.Add(new SqlParameter { ParameterName = "UsuarioRegistra", SqlDbType = SqlDbType.Int, Value = receta.Usuario_Registra  });
-            parametros.Add(new SqlParameter { ParameterName = "Estatus", SqlDbType = SqlDbType.Int, Value = receta.Estatus  });
-
+            parametros.Add(new SqlParameter { ParameterName = "Id", SqlDbType = SqlDbType.VarChar, Value = receta.Id });
+            parametros.Add(new SqlParameter { ParameterName = "Nombre", SqlDbType = SqlDbType.VarChar, Value = receta.Nombre });
+            parametros.Add(new SqlParameter { ParameterName = "UsuarioRegistra", SqlDbType = SqlDbType.Int, Value = receta.Usuario_Registra });
+            parametros.Add(new SqlParameter { ParameterName = "Estatus", SqlDbType = SqlDbType.Int, Value = receta.Estatus });
 
             try
             {
@@ -106,7 +107,7 @@ namespace reportesApi.Services
             ConexionDataAccess dac = new ConexionDataAccess(connection);
             parametros = new ArrayList();
             
-            parametros.Add(new SqlParameter { ParameterName = "Id", SqlDbType = SqlDbType.Int, Value = Id  });
+            parametros.Add(new SqlParameter { ParameterName = "Id", SqlDbType = SqlDbType.Int, Value = Id });
 
             try
             {
@@ -119,5 +120,41 @@ namespace reportesApi.Services
             }
         }
 
+        // Nuevo método para generar el archivo Excel
+        public MemoryStream GetRecetasExcel()
+        {
+            var stream = new MemoryStream();
+            var listaRecetas = GetRecetas(); // Obtiene las recetas desde la base de datos
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Recetas");
+
+                // Agregar encabezados
+                worksheet.Cells[1, 1].Value = "ID";
+                worksheet.Cells[1, 2].Value = "Nombre";
+                worksheet.Cells[1, 3].Value = "Fecha de Creación";
+                worksheet.Cells[1, 4].Value = "Estatus";
+                worksheet.Cells[1, 5].Value = "Usuario Registrante";
+                worksheet.Cells[1, 6].Value = "Fecha de Registro";
+
+                // Agregar datos
+                for (int i = 0; i < listaRecetas.Count; i++)
+                {
+                    var receta = listaRecetas[i];
+                    worksheet.Cells[i + 2, 1].Value = receta.Id;
+                    worksheet.Cells[i + 2, 2].Value = receta.Nombre;
+                    worksheet.Cells[i + 2, 3].Value = receta.Fecha_Creacion;
+                    worksheet.Cells[i + 2, 4].Value = receta.Estatus;
+                    worksheet.Cells[i + 2, 5].Value = receta.Usuario_Registra;
+                    worksheet.Cells[i + 2, 6].Value = receta.Fecha_Registro;
+                }
+
+                package.Save();
+            }
+
+            stream.Position = 0; // Reinicia la posición del stream
+            return stream;
+        }
     }
 }

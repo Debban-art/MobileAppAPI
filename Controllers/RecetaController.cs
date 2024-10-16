@@ -7,25 +7,21 @@ using Microsoft.Extensions.Logging;
 using System.Net;
 using reportesApi.Helpers;
 using Microsoft.AspNetCore.Hosting;
+using OfficeOpenXml; // Necesario para EPPlus
+using System.IO;     // Necesario para MemoryStream
 
 namespace reportesApi.Controllers
 {
     [Route("api")]
-    public class RecetaController: ControllerBase
+    public class RecetaController : ControllerBase
     {
         private readonly RecetaService _recetaService;
         private readonly ILogger<RecetaController> _logger;
 
-        private readonly IJwtAuthenticationService _authService;
-        private readonly IWebHostEnvironment _hostingEnvironment;
-
-        Encrypt enc = new Encrypt();
-
-        public RecetaController(RecetaService recetaservice, ILogger<RecetaController> logger, IJwtAuthenticationService authService)
+        public RecetaController(RecetaService recetaService, ILogger<RecetaController> logger)
         {
-            _recetaService = recetaservice;
+            _recetaService = recetaService;
             _logger = logger;
-            _authService = authService;
         }
 
         [HttpPost("InsertReceta")]
@@ -36,7 +32,7 @@ namespace reportesApi.Controllers
             {
                 objectResponse.StatusCode = (int)HttpStatusCode.Created;
                 objectResponse.success = true;
-                objectResponse.message = "Receta registrada con éxito" ;
+                objectResponse.message = "Receta registrada con éxito";
                 objectResponse.response = _recetaService.InsertReceta(req);
             }
             catch (Exception ex)
@@ -50,18 +46,30 @@ namespace reportesApi.Controllers
         }
 
         [HttpGet("GetRecetas")]
-        public IActionResult GetRecetas()
+        public IActionResult GetRecetas(bool ExportarAExcel = false)
         {
             var objectResponse = Helper.GetStructResponse();
             try
             {
-                objectResponse.StatusCode = (int)HttpStatusCode.OK;
-                objectResponse.success = true;
-                objectResponse.message = "Recetas obtenidas con éxito";
-                var resultado = _recetaService.GetRecetas();
-                objectResponse.response = resultado;
+                if (ExportarAExcel)
+                {
+                    // Generar el archivo Excel utilizando el servicio
+                    var excelStream = _recetaService.GetRecetasExcel();
+                    var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    var fileName = "RecetasExcel.xlsx";
+
+                    return File(excelStream.ToArray(), contentType, fileName);
+                }
+                else
+                {
+                    var recetas = _recetaService.GetRecetas();
+                    objectResponse.StatusCode = (int)HttpStatusCode.OK;
+                    objectResponse.success = true;
+                    objectResponse.message = "Recetas obtenidas con éxito";
+                    objectResponse.response = recetas;
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 objectResponse.StatusCode = (int)HttpStatusCode.InternalServerError;
                 objectResponse.success = false;
@@ -79,7 +87,7 @@ namespace reportesApi.Controllers
             {
                 objectResponse.StatusCode = (int)HttpStatusCode.Created;
                 objectResponse.success = true;
-                objectResponse.message = "Receta actualizada con éxito" ;
+                objectResponse.message = "Receta actualizada con éxito";
                 _recetaService.UpdateReceta(req);
             }
             catch (Exception ex)
@@ -93,14 +101,14 @@ namespace reportesApi.Controllers
         }
 
         [HttpDelete("DeleteReceta")]
-        public IActionResult DeleteProveedor([FromQuery] int Id)
+        public IActionResult DeleteReceta([FromQuery] int Id)
         {
             var objectResponse = Helper.GetStructResponse();
             try
             {
                 objectResponse.StatusCode = (int)HttpStatusCode.Created;
                 objectResponse.success = true;
-                objectResponse.message = "Receta eliminada con éxito" ;
+                objectResponse.message = "Receta eliminada con éxito";
                 _recetaService.DeleteReceta(Id);
             }
             catch (Exception ex)
@@ -113,8 +121,5 @@ namespace reportesApi.Controllers
             return new JsonResult(objectResponse);
         }
     }
-
-    
-
-
 }
+
