@@ -12,6 +12,9 @@ using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Microsoft.AspNetCore.Hosting;
+using System.Data;
+using System.Collections.Generic;
+using ClosedXML.Excel;
 
 namespace reportesApi.Controllers
 {
@@ -88,6 +91,42 @@ namespace reportesApi.Controllers
             }
 
             return new JsonResult(objectResponse);
+        }
+
+        [HttpGet("ExportarExcel")]
+        public IActionResult ExportarExcel()
+        {
+            var data = GetRecetasData();
+
+            XLWorkbook wb = new XLWorkbook();
+            MemoryStream ms = new MemoryStream();
+
+            wb.AddWorksheet(data, "RecetaService").Columns().AdjustToContents();
+            wb.SaveAs(ms);
+
+            return File(ms.ToArray(),"aplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Recetas.xlsx");
+        }
+
+        private DataTable GetRecetasData()
+        {
+            DataTable dt = new DataTable();
+            dt.TableName = "Recetas";
+            dt.Columns.Add("Id",typeof(int));
+            dt.Columns.Add("Nombre",typeof(string));
+            dt.Columns.Add("Estatus",typeof(int));
+            dt.Columns.Add("FechaCreacion",typeof(string));
+            dt.Columns.Add("UsuarioRegistra",typeof(string));
+            dt.Columns.Add("FechaRegistro",typeof(string));
+
+            List <GetRecetaModel> lista = this._RecetaService.GetRecetas();
+            if (lista.Count > 0)
+            {
+                foreach (GetRecetaModel Receta in lista)
+                {
+                    dt.Rows.Add(Receta.Id, Receta.Nombre, Receta.Estatus, Receta.FechaCreacion, Receta.UsuarioRegistra, Receta.FechaRegistro);
+                } 
+            }
+            return dt;
         }
 
         [HttpPut("UpdateReceta")]
