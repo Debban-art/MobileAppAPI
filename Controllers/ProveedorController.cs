@@ -7,6 +7,10 @@ using Microsoft.Extensions.Logging;
 using System.Net;
 using reportesApi.Helpers;
 using Microsoft.AspNetCore.Hosting;
+using ClosedXML.Excel;
+using System.IO;
+using System.Data;
+using System.Collections.Generic;
 
 namespace reportesApi.Controllers
 {
@@ -69,6 +73,48 @@ namespace reportesApi.Controllers
             }
 
             return new JsonResult(objectResponse);
+        }
+
+        [HttpGet("ExportarExcelProveedores")]
+        public IActionResult ExportarExcel()
+        {
+            var data = GetProveedoresData();
+
+            XLWorkbook wb = new XLWorkbook();
+            MemoryStream ms = new MemoryStream();
+
+            wb.AddWorksheet(data, "Proveedores").Columns().AdjustToContents();
+            wb.SaveAs(ms);
+
+
+            return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Proveedores.xlsx");
+        }
+
+        private DataTable GetProveedoresData()
+        {
+            DataTable dt = new DataTable();
+            dt.TableName = "Proveedores";
+            dt.Columns.Add("Id", typeof(int));
+            dt.Columns.Add("Nombre", typeof(string));
+            dt.Columns.Add("Dirección", typeof(string));
+            dt.Columns.Add("Email", typeof(string));
+            dt.Columns.Add("RFC", typeof(string));
+            dt.Columns.Add("Plazo Pago", typeof(int));
+            dt.Columns.Add("Porcentaje Retención", typeof(float));
+            dt.Columns.Add("Estatus", typeof(int));
+            dt.Columns.Add("Usuario Registra", typeof(string));
+            dt.Columns.Add("Fecha Registro", typeof(string));
+
+
+            List<GetProveedoresModel> lista = this._proveedorService.GetAllProveedores();
+            if (lista.Count > 0)
+            {
+                foreach(GetProveedoresModel proveedor in lista)
+                {
+                    dt.Rows.Add(proveedor.Proveedor_Id, proveedor.Proveedor_Nombre, proveedor.Proveedor_Direccion, proveedor.Proveedor_Email,proveedor.Proveedor_RFC, proveedor.Proveedor_PlazoPago, proveedor.Proveedor_PorcentajeRetencion,proveedor.Proveedor_Estatus, proveedor.Usuario_Registra, proveedor.Fecha_Registro);
+                }
+            }
+            return dt;
         }
 
         [HttpPut("UpdateProveedor")]

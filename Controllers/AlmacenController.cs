@@ -12,6 +12,9 @@ using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Microsoft.AspNetCore.Hosting;
+using System.Data;
+using System.Collections.Generic;
+using ClosedXML.Excel;
 
 namespace reportesApi.Controllers
 {
@@ -75,6 +78,45 @@ namespace reportesApi.Controllers
 
             return new JsonResult(objectResponse);
         }
+
+        [HttpGet("ExportarExcelAlmacenes")]
+        public IActionResult ExportarExcel()
+        {
+            var data = GetAlmacenesData();
+
+            XLWorkbook wb = new XLWorkbook();
+            MemoryStream ms = new MemoryStream();
+
+            wb.AddWorksheet(data, "Almacenes").Columns().AdjustToContents();
+            wb.SaveAs(ms);
+
+
+            return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Almacenes.xlsx");
+        }
+
+        private DataTable GetAlmacenesData()
+        {
+            DataTable dt = new DataTable();
+            dt.TableName = "Almacenes";
+            dt.Columns.Add("Id", typeof(int));
+            dt.Columns.Add("Nombre", typeof(string));
+            dt.Columns.Add("Dirección", typeof(string));
+            dt.Columns.Add("Estatus", typeof(int));
+            dt.Columns.Add("Usuario Registra", typeof(string));
+            dt.Columns.Add("Fecha Registro", typeof(string));
+
+
+            List<GetAlmacenesModel> lista = this._almacenService.GetAllAlmacenes();
+            if (lista.Count > 0)
+            {
+                foreach(GetAlmacenesModel almacen in lista)
+                {
+                    dt.Rows.Add(almacen.Almacen_Id, almacen.Almacen_Nombre, almacen.Almacen_Direccion, almacen.Almacen_Estatus, almacen.Usuario_Registra, almacen.Fecha_Registro);
+                }
+            }
+            return dt;
+        }
+
 
         [HttpPut("UpdateAlmacen")]
         public IActionResult UpdateAlmacen([FromBody] UpdateAlmacenModel req)

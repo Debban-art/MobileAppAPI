@@ -30,7 +30,6 @@ namespace reportesApi.Services
         public List<GetEntradaModel> GetEntradas()
         {
             ConexionDataAccess dac = new ConexionDataAccess(connection);
-            GetAlumnoModel persona = new GetAlumnoModel();
 
             List<GetEntradaModel> lista = new List<GetEntradaModel>();
             try

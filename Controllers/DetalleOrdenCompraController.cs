@@ -12,6 +12,9 @@ using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Microsoft.AspNetCore.Hosting;
+using ClosedXML.Excel;
+using System.Data;
+using System.Collections.Generic;
 
 namespace reportesApi.Controllers
 {
@@ -75,6 +78,49 @@ namespace reportesApi.Controllers
 
             return new JsonResult(objectResponse);
         }
+
+        [HttpGet("ExportarExcelDetallesOrdenCompra")]
+        public IActionResult ExportarExcel([FromQuery] int IdOrdenCompra)
+        {
+            var data = GetDetallesOrdenCompraData(IdOrdenCompra);
+
+            XLWorkbook wb = new XLWorkbook();
+            MemoryStream ms = new MemoryStream();
+
+            wb.AddWorksheet(data, "Detalles Orden Compra").Columns().AdjustToContents();
+            wb.SaveAs(ms);
+
+
+            return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Detalles Orden Compra.xlsx");
+        }
+
+        private DataTable GetDetallesOrdenCompraData(int IdOrdenCompra)
+        {
+            DataTable dt = new DataTable();
+            dt.TableName = "Detalles Orden Compra";
+            dt.Columns.Add("Id", typeof(int));
+            dt.Columns.Add("Id Orden Compra", typeof(int));
+            dt.Columns.Add("Insumo", typeof(string));
+            dt.Columns.Add("Cantidad", typeof(float));
+            dt.Columns.Add("Cantidad Recibida", typeof(float));
+            dt.Columns.Add("Costo", typeof(float));
+            dt.Columns.Add("Costo Renglón", typeof(float));
+            dt.Columns.Add("Estatus", typeof(int));
+            dt.Columns.Add("Fecha Registro", typeof(string));
+            dt.Columns.Add("Usuario Registra", typeof(string));
+
+
+            List<GetDetallesOrdenCompraModel> lista = this._detalleOrdenCompraService.GetDetalleOrdenCompra(IdOrdenCompra);
+            if (lista.Count > 0)
+            {
+                foreach(GetDetallesOrdenCompraModel detalle in lista)
+                {
+                    dt.Rows.Add(detalle.Id, detalle.IdOrdenCompra, detalle.Insumo, detalle.Cantidad, detalle.CantidadRecibida, detalle.Costo, detalle.CostoRenglon, detalle.Estatus, detalle.FechaRegistro, detalle.UsuarioRegistra);
+                }
+            }
+            return dt;
+        }
+
 
         [HttpPut("UpdateDetalleOrdenCompra")]
         public IActionResult UpdateDetalleOrdenCompra([FromBody] UpdateDetalleOrdenCompraModel req)

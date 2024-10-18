@@ -12,6 +12,9 @@ using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Microsoft.AspNetCore.Hosting;
+using ClosedXML.Excel;
+using System.Data;
+using System.Collections.Generic;
 
 namespace reportesApi.Controllers
 {
@@ -75,6 +78,46 @@ namespace reportesApi.Controllers
 
             return new JsonResult(objectResponse);
         }
+
+        [HttpGet("ExportarExcelDetallesReceta")]
+        public IActionResult ExportarExcel([FromQuery] int IdReceta)
+        {
+            var data = GetDetallesRecetasData(IdReceta);
+
+            XLWorkbook wb = new XLWorkbook();
+            MemoryStream ms = new MemoryStream();
+
+            wb.AddWorksheet(data, "DetallesReceta").Columns().AdjustToContents();
+            wb.SaveAs(ms);
+
+
+            return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","DetallesReceta.xlsx");
+        }
+
+        private DataTable GetDetallesRecetasData(int IdReceta)
+        {
+            DataTable dt = new DataTable();
+            dt.TableName = "DetallesRecetas";
+            dt.Columns.Add("Id", typeof(int));
+            dt.Columns.Add("Receta", typeof(string));
+            dt.Columns.Add("Insumo", typeof(string));
+            dt.Columns.Add("Cantidad", typeof(float));
+            dt.Columns.Add("Estatus", typeof(int));
+            dt.Columns.Add("Usuario Registra", typeof(string));
+            dt.Columns.Add("Fecha Registro", typeof(string));
+
+
+            List<GetDetallesRecetaModel> lista = this._detalleRecetaService.GetDetallesReceta(IdReceta);
+            if (lista.Count > 0)
+            {
+                foreach(GetDetallesRecetaModel detallesReceta in lista)
+                {
+                    dt.Rows.Add(detallesReceta.Id, detallesReceta.Receta, detallesReceta.Insumo,detallesReceta.Cantidad, detallesReceta.Estatus, detallesReceta.UsuarioRegistra, detallesReceta.FechaRegistro);
+                }
+            }
+            return dt;
+        }
+
 
         [HttpPut("UpdateDetalleReceta")]
         public IActionResult UpdateDetalleReceta([FromBody] UpdateDetalleRecetaModel req)

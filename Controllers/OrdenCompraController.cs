@@ -12,6 +12,9 @@ using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Microsoft.AspNetCore.Hosting;
+using ClosedXML.Excel;
+using System.Data;
+using System.Collections.Generic;
 
 namespace reportesApi.Controllers
 {
@@ -71,6 +74,48 @@ namespace reportesApi.Controllers
             }
 
             return new JsonResult(objectResponse);
+        }
+
+        [HttpGet("ExportarExcelOrdenCompras")]
+        public IActionResult ExportarExcel()
+        {
+            var data = GetOrdenComprasData();
+
+            XLWorkbook wb = new XLWorkbook();
+            MemoryStream ms = new MemoryStream();
+
+            wb.AddWorksheet(data, "OrdenCompras").Columns().AdjustToContents();
+            wb.SaveAs(ms);
+
+
+            return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","OrdenCompras.xlsx");
+        }
+
+        private DataTable GetOrdenComprasData()
+        {
+            DataTable dt = new DataTable();
+            dt.TableName = "OrdenCompras";
+            dt.Columns.Add("Id", typeof(int));
+            dt.Columns.Add("Proveedor", typeof(string));
+            dt.Columns.Add("Sucursal", typeof(string));
+            dt.Columns.Add("Id Comprador", typeof(int));
+            dt.Columns.Add("Fecha Llegada", typeof(string));
+            dt.Columns.Add("Fecha", typeof(string));
+            dt.Columns.Add("Total", typeof(float));
+            dt.Columns.Add("Estatus", typeof(int));
+            dt.Columns.Add("Usuario Registra", typeof(string));
+            dt.Columns.Add("Fecha Registro", typeof(string));
+
+
+            List<GetOrdenCompraModel> lista = this._ordenCompraService.GetOrdenCompra();
+            if (lista.Count > 0)
+            {
+                foreach(GetOrdenCompraModel ordenCompra in lista)
+                {
+                    dt.Rows.Add(ordenCompra.Id, ordenCompra.Proveedor, ordenCompra.Sucursal,ordenCompra.IdComprador,ordenCompra.FechaLlegada, ordenCompra.Fecha,ordenCompra.Total,ordenCompra.Estatus, ordenCompra.UsuarioRegistra, ordenCompra.FechaRegistro);
+                }
+            }
+            return dt;
         }
 
         [HttpPut("UpdateOrdenCompra")]

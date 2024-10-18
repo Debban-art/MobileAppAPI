@@ -69,7 +69,7 @@ namespace reportesApi.Services
                             Cantidad = decimal.Parse(dr["Cantidad"].ToString()),
                             SinCargo = decimal.Parse(dr["SinCargo"].ToString()),
                             Costo = decimal.Parse(dr["Costo"].ToString()),
-                            IdEntrada = int.Parse(dr["Estatus"].ToString()),
+                            IdEntrada = int.Parse(dr["IdEntrada"].ToString()),
                             Estatus = int.Parse(dr["Estatus"].ToString()),
                             UsuarioRegistra = dr["UsuarioRegistra"].ToString(),
                             FechaRegistro = dr["FechaRegistro"].ToString()

@@ -12,6 +12,9 @@ using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Microsoft.AspNetCore.Hosting;
+using System.Data;
+using System.Collections.Generic;
+using ClosedXML.Excel;
 
 namespace reportesApi.Controllers
 {
@@ -74,6 +77,46 @@ namespace reportesApi.Controllers
             }
 
             return new JsonResult(objectResponse);
+        }
+
+        [HttpGet("ExportarExcelInsumos")]
+        public IActionResult ExportarExcel()
+        {
+            var data = GetInsumosData();
+
+            XLWorkbook wb = new XLWorkbook();
+            MemoryStream ms = new MemoryStream();
+
+            wb.AddWorksheet(data, "Insumos").Columns().AdjustToContents();
+            wb.SaveAs(ms);
+
+
+            return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Insumos.xlsx");
+        }
+
+        private DataTable GetInsumosData()
+        {
+            DataTable dt = new DataTable();
+            dt.TableName = "Insumos";
+            dt.Columns.Add("Id", typeof(int));
+            dt.Columns.Add("Insumo", typeof(string));
+            dt.Columns.Add("DescripcionInsumo", typeof(string));
+            dt.Columns.Add("Costo", typeof(float));
+            dt.Columns.Add("UnidadMedida", typeof(int));
+            dt.Columns.Add("InsumoUp", typeof(string));
+            dt.Columns.Add("Estatus", typeof(int));
+            dt.Columns.Add("UsuarioRegistra", typeof(string));
+            dt.Columns.Add("FechaRegistro", typeof(string));
+
+            List<GetInsumosModel> lista = this._insumoService.GetAllInsumos();
+            if (lista.Count > 0)
+            {
+                foreach(GetInsumosModel insumo in lista)
+                {
+                    dt.Rows.Add(insumo.Insumo_Id, insumo.Insumo, insumo.Insumo_Descripcion, insumo.Insumo_Costo, insumo.Insumo_UnidadMedida, insumo.Insumo_InsumoUp, insumo.Insumo_Estatus, insumo.Usuario_Registra, insumo.Fecha_Registro);
+                }
+            }
+            return dt;
         }
 
         [HttpPut("UpdateInsumo")]

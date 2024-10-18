@@ -12,6 +12,9 @@ using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Microsoft.AspNetCore.Hosting;
+using ClosedXML.Excel;
+using System.Data;
+using System.Collections.Generic;
 
 namespace reportesApi.Controllers
 {
@@ -34,7 +37,6 @@ namespace reportesApi.Controllers
             _logger = logger;
        
             _authService = authService;
-            // Configura la ruta base donde se almacenan los archivos.
             // Asegúrate de ajustar la ruta según tu estructura de directorios.
 
             
@@ -87,6 +89,47 @@ namespace reportesApi.Controllers
 
             return new JsonResult(objectResponse);
         }
+
+        [HttpGet("ExportarExcelPersonas")]
+        public IActionResult ExportarExcel()
+        {
+            var data = GetPersonasData();
+
+            XLWorkbook wb = new XLWorkbook();
+            MemoryStream ms = new MemoryStream();
+
+            wb.AddWorksheet(data, "Personas").Columns().AdjustToContents();
+            wb.SaveAs(ms);
+
+
+            return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Personas.xlsx");
+        }
+
+        private DataTable GetPersonasData()
+        {
+            DataTable dt = new DataTable();
+            dt.TableName = "Personas";
+            dt.Columns.Add("Id", typeof(int));
+            dt.Columns.Add("Nombre", typeof(string));
+            dt.Columns.Add("Apellido Paterno", typeof(string));
+            dt.Columns.Add("Apellido Materno", typeof(string));
+            dt.Columns.Add("Dirección", typeof(string));
+            dt.Columns.Add("Estatus", typeof(int));
+            dt.Columns.Add("Usuario Registra", typeof(string));
+            dt.Columns.Add("Fecha Registro", typeof(string));
+
+
+            List<GetPersonaModel> lista = this._personaService.GetPersonas();
+            if (lista.Count > 0)
+            {
+                foreach(GetPersonaModel persona in lista)
+                {
+                    dt.Rows.Add(persona.Id, persona.Nombre, persona.ApPaterno,persona.ApMaterno,persona.Direccion, persona.Estatus, persona.UsuarioRegistra, persona.FechaRegistro);
+                }
+            }
+            return dt;
+        }
+
 
         [HttpPut("UpdatePersonas")]
         public IActionResult UpdatePersonas([FromBody] UpdatePersonaModel req )

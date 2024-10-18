@@ -12,6 +12,9 @@ using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Microsoft.AspNetCore.Hosting;
+using ClosedXML.Excel;
+using System.Data;
+using System.Collections.Generic;
 
 namespace reportesApi.Controllers
 {
@@ -75,6 +78,48 @@ namespace reportesApi.Controllers
 
             return new JsonResult(objectResponse);
         }
+
+        [HttpGet("ExportarExcelEntradas")]
+        public IActionResult ExportarExcel()
+        {
+            var data = GetEntradasData();
+
+            XLWorkbook wb = new XLWorkbook();
+            MemoryStream ms = new MemoryStream();
+
+            wb.AddWorksheet(data, "Entradas").Columns().AdjustToContents();
+            wb.SaveAs(ms);
+
+
+            return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Entradas.xlsx");
+        }
+
+        private DataTable GetEntradasData()
+        {
+            DataTable dt = new DataTable();
+            dt.TableName = "Entradas";
+            dt.Columns.Add("Id", typeof(int));
+            dt.Columns.Add("Proveedor", typeof(string));
+            dt.Columns.Add("Sucursal", typeof(string));
+            dt.Columns.Add("Total", typeof(decimal));
+            dt.Columns.Add("Factura", typeof(string));
+            dt.Columns.Add("Fecha Entrada", typeof(string));
+            dt.Columns.Add("Estatus", typeof(int));
+            dt.Columns.Add("Usuario Registra", typeof(string));
+            dt.Columns.Add("Fecha Registro", typeof(string));
+
+
+            List<GetEntradaModel> lista = this._entradaService.GetEntradas();
+            if (lista.Count > 0)
+            {
+                foreach(GetEntradaModel entrada in lista)
+                {
+                    dt.Rows.Add(entrada.Id, entrada.Proveedor, entrada.Sucursal,entrada.Total,entrada.Factura, entrada.FechaEntrada,entrada.Estatus, entrada.UsuarioRegistra, entrada.FechaRegistro);
+                }
+            }
+            return dt;
+        }
+
 
         [HttpPut("UpdateEntrada")]
         public IActionResult UpdateEntrada([FromBody] UpdateEntradaModel req)
