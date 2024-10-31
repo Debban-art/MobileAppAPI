@@ -12,6 +12,10 @@ using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Microsoft.AspNetCore.Hosting;
+using System.Data;
+using System.Collections.Generic;
+using ClosedXML.Excel;
+
 
 namespace reportesApi.Controllers
 {
@@ -88,6 +92,47 @@ namespace reportesApi.Controllers
             }
 
             return new JsonResult(objectResponse);
+        }
+
+         [HttpGet("ExportarExcelProveedores")]
+        public IActionResult ExportarExcel()
+        {
+            var data = GetProveedoresData();
+
+            XLWorkbook wb = new XLWorkbook();
+            MemoryStream ms = new MemoryStream();
+
+            wb.AddWorksheet(data, "ProveedorService").Columns().AdjustToContents();
+            wb.SaveAs(ms);
+
+            return File(ms.ToArray(),"aplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Proveedores.xlsx");
+        }
+
+        private DataTable GetProveedoresData()
+        {
+            DataTable dt = new DataTable();
+            dt.TableName = "Proveedores";
+            dt.Columns.Add("Id",typeof(int));
+            dt.Columns.Add("Nombre",typeof(string));
+            dt.Columns.Add("Direccion",typeof(string));
+            dt.Columns.Add("Email",typeof(string));
+            dt.Columns.Add("RFC",typeof(string));
+            dt.Columns.Add("PlazoPago",typeof(int));
+            dt.Columns.Add("PorcentajeRetencion",typeof(float));
+            dt.Columns.Add("Estatus",typeof(int));
+            dt.Columns.Add("UsuarioRegistra",typeof(string));
+            dt.Columns.Add("FechaRegistro",typeof(string));
+
+            List <GetProveedorModel> lista = this._ProveedorService.GetProveedores();
+            if (lista.Count > 0)
+            {
+                foreach (GetProveedorModel Proveedor in lista)
+                {
+                    dt.Rows.Add(Proveedor.Id, Proveedor.Nombre, Proveedor.Direccion, Proveedor.Email, Proveedor.RFC, Proveedor.PlazoPago, 
+                    Proveedor.PorcentajeRetencion ,Proveedor.Estatus,  Proveedor.UsuarioRegistra, Proveedor.FechaRegistro);
+                } 
+            }
+            return dt;
         }
 
         [HttpPut("UpdateProveedor")]
