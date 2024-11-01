@@ -73,6 +73,7 @@ namespace reportesApi
             services.AddSingleton<DetalleOrdenCompraService>();
             services.AddSingleton<ExistenciasService>();
             services.AddSingleton<TiposMovimientoService>();
+            services.AddSingleton<MovimientoService>();
 
 
             services.AddCors();
