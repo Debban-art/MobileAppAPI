@@ -21,10 +21,11 @@ namespace reportesApi.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public void InsertMovimiento(InsertMovimientoModel movimiento)
+        public int InsertMovimiento(InsertMovimientoModel movimiento)
         {
             ConexionDataAccess dac = new ConexionDataAccess(connection);
             parametros = new ArrayList();
+            int idMovimiento=0;
             
             parametros.Add(new SqlParameter { ParameterName = "IdTipoMovimiento", SqlDbType = SqlDbType.Int, Value = movimiento.IdTipoMovimiento  });
             parametros.Add(new SqlParameter { ParameterName = "IdAlmacen", SqlDbType = SqlDbType.Int, Value = movimiento.IdAlmacen  });
@@ -33,12 +34,15 @@ namespace reportesApi.Services
             try
             {
                 DataSet ds = dac.Fill("sp_InsertMovimiento", parametros);
+                idMovimiento = int.Parse(ds.Tables[0].Rows[0]["IdMovimiento"].ToString());
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw ex;
             }
+            return idMovimiento;
+            
         }
 
         public List<GetMovimientosModel> GetMovimientos()

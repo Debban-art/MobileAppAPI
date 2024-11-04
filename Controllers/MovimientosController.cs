@@ -41,7 +41,7 @@ namespace reportesApi.Controllers
                 objectResponse.StatusCode = (int)HttpStatusCode.Created;
                 objectResponse.success = true;
                 objectResponse.message = "Movimiento registrado con éxito" ;
-                _movimientoService.InsertMovimiento(req);
+                objectResponse.response =_movimientoService.InsertMovimiento(req);
             }
             catch (Exception ex)
             {
