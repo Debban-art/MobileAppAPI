@@ -117,6 +117,53 @@ namespace reportesApi.Controllers
             return dt;
         }
 
+        [HttpGet("GetReporteMovimientosInventarios")]
+        public IActionResult GetReporteMovimientosInventarios([FromQuery] string FechaInicio, string FechaFin, int IdAlmacen)
+        {
+            var data = GetReporteMovimientosInventariosData(FechaInicio, FechaFin, IdAlmacen);
+            
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var ws = wb.Worksheets.Add("ReporteMovimientos");
+                
+                // Título con rango de fechas
+                string titulo = $"Reporte de Movimientos de {FechaInicio} a {FechaFin}";
+                ws.Cell(1, 1).Value = titulo;
+                ws.Range(1, 1, 1, data.Columns.Count).Merge().Style.Font.SetBold().Font.FontSize = 16;
+                
+                // Copiar DataTable al worksheet
+                ws.Cell(3, 1).InsertTable(data); // Dejar dos filas de espacio para el título
+                ws.Columns().AdjustToContents();
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    wb.SaveAs(ms);
+                    return File(ms.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ReporteMovimientosInventario.xlsx");
+                }
+            }
+        }
+
+        private DataTable GetReporteMovimientosInventariosData(string FechaInicio, string FechaFin, int IdAlmacen)
+        {
+            DataTable dt = new DataTable();
+            dt.TableName = "ReporteMovimientos";
+            dt.Columns.Add("Insumo", typeof(string));
+            dt.Columns.Add("Descripción Insumo", typeof(string));
+            dt.Columns.Add("Tipo Movimiento", typeof(string));
+            dt.Columns.Add("Cantidad", typeof(decimal));
+            dt.Columns.Add("Costo", typeof(decimal));
+            dt.Columns.Add("Total Renglón", typeof(decimal));
+            dt.Columns.Add("Usuario Registra", typeof(string));
+
+            // Llamada al servicio para obtener datos
+            var lista = _renglonMovimientoService.GetMovimientosReporte(FechaInicio, FechaFin, IdAlmacen);
+            foreach (var movimiento in lista)
+            {
+                dt.Rows.Add(movimiento.Insumo, movimiento.DescripcionInsumo, movimiento.TipoMovimiento, movimiento.Cantidad, movimiento.Costo, movimiento.TotalRenglon, movimiento.UsuarioRegistra);
+            }
+            return dt;
+        }
+
         [HttpPut("UpdateRenglonMovimiento")]
         public IActionResult UpdateRenglonMovimiento([FromBody] UpdateRenglonMovimientoModel req)
         {

@@ -123,6 +123,43 @@ namespace reportesApi.Services
             }
         }
 
+        public List<GetMovimientosReporteModel> GetMovimientosReporte(string FechaInicio, string FechaFin, int IdAlmacen)
+        {
+            ConexionDataAccess dac = new ConexionDataAccess(connection);
+            parametros = new ArrayList();
+            parametros.Add(new SqlParameter { ParameterName = "FechaInicio", SqlDbType = SqlDbType.Date, Value = FechaInicio  });
+            parametros.Add(new SqlParameter { ParameterName = "FechaFin", SqlDbType = SqlDbType.Date, Value = FechaFin  });
+            parametros.Add(new SqlParameter { ParameterName = "IdAlmacen", SqlDbType = SqlDbType.Int, Value = IdAlmacen  });
+            List<GetMovimientosReporteModel> lista = new List<GetMovimientosReporteModel>();
+
+            try
+            {
+                DataSet ds = dac.Fill("sp_GetReporteMovimientos", parametros);
+                if(ds.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+                        lista.Add(new GetMovimientosReporteModel
+                        {
+                            Insumo = dr["Insumo"].ToString(),
+                            DescripcionInsumo = dr["DescripcionInsumo"].ToString(),
+                            Cantidad = float.Parse(dr["Cantidad"].ToString()),
+                            Costo = float.Parse(dr["Costo"].ToString()),
+                            TotalRenglon = float.Parse(dr["TotalRenglon"].ToString()),
+                            UsuarioRegistra = dr["UsuarioRegistra"].ToString()
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+
+            return lista;
+        }
+
 
     }
 

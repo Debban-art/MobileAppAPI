@@ -32,4 +32,15 @@ namespace reportesApi.Models
         public int Estatus {get; set;}
         public int IdUsuarioRegistra {get; set;}
     }
+
+    public class GetMovimientosReporteModel
+    {
+        public string Insumo {get; set;}
+        public string DescripcionInsumo {get; set;}
+        public string TipoMovimiento {get; set;}
+        public float Cantidad {get; set;}
+        public float Costo {get; set;}
+        public float TotalRenglon {get; set;}
+        public string UsuarioRegistra {get; set;}
+    }
 }
