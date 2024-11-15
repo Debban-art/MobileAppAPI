@@ -71,6 +71,9 @@ namespace reportesApi.Services
                             AlmacenSalida = dr["AlmacenSalida"].ToString(),
                             IdEstatusTraspaso = int.Parse(dr["IdEstatusTraspaso"].ToString()),
                             EstatusTraspaso = dr["EstatusTraspaso"].ToString(),
+                            Insumo = dr["Insumo"].ToString(),
+                            DescripcionInsumo = dr["DescripcionInsumo"].ToString(),
+                            Cantidad = decimal.Parse(dr["Cantidad"].ToString()),
                             FechaInicio = dr["FechaInicio"].ToString(),
                             FechaSalida = dr["FechaSalida"].ToString(),
                             FechaEntrega = dr["FechaEntrega"].ToString(),
@@ -125,7 +128,7 @@ namespace reportesApi.Services
 
             try
             {
-                dac.ExecuteNonQuery("sp_UpdateTraspaso", parametros);
+                dac.ExecuteNonQuery("sp_UpdateTraspasoEstatus", parametros);
             }
             catch (Exception ex)
             {

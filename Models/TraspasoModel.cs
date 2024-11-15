@@ -9,6 +9,9 @@ namespace reportesApi.Models
         public string AlmacenSalida {get; set;}
         public int IdEstatusTraspaso {get; set;}
         public string EstatusTraspaso {get; set;}
+        public string Insumo {get; set;}
+        public string DescripcionInsumo {get; set;}
+        public decimal Cantidad {get; set;}
         public string FechaInicio {get; set;}
         public string FechaSalida {get; set;}
         public string FechaEntrega {get; set;}

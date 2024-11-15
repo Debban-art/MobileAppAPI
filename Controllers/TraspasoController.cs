@@ -75,46 +75,58 @@ namespace reportesApi.Controllers
             return new JsonResult(objectResponse);
         }
 
-        // [HttpGet("ExportarExcelTraspasos")]
-        // public IActionResult ExportarExcel()
-        // {
-        //     var data = GetTraspasosData();
+        [HttpGet("ExportarExcelTraspasos")]
+        public IActionResult ExportarExcel([FromQuery] GetTraspasoRequest req)
+        {
+            var data = GetTraspasosData(req);
 
-        //     XLWorkbook wb = new XLWorkbook();
-        //     MemoryStream ms = new MemoryStream();
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var ws = wb.Worksheets.Add("Traspasos");
 
-        //     wb.AddWorksheet(data, "Traspasos").Columns().AdjustToContents();
-        //     wb.SaveAs(ms);
+                string Titulo = $"Reporte de traspasos Almacen #{req.IdAlmacen} de {req.FechaInicio} a {req.FechaFin}";
+                ws.Cell(1, 1).Value = Titulo;
+                ws.Range(1, 1, 1, data.Columns.Count).Merge().Style.Font.SetBold().Font.FontSize = 16;
+
+                ws.Cell(3, 1).InsertTable(data);
+                ws.Columns().AdjustToContents();
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    wb.SaveAs(ms);
+                    return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Reporte_Traspasos.xlsx");
+                }
+            }
+        }
+
+        private DataTable GetTraspasosData(GetTraspasoRequest req)
+        {
+            DataTable dt = new DataTable();
+            dt.TableName = "Traspasos";
+            dt.Columns.Add("Id", typeof(int));
+            dt.Columns.Add("Almacen Entrada", typeof(string));
+            dt.Columns.Add("Almacen Salida", typeof(string));
+            dt.Columns.Add("Estatus", typeof(string));
+            dt.Columns.Add("Insumo", typeof(string));
+            dt.Columns.Add("Descripción", typeof(string));
+            dt.Columns.Add("Cantidad", typeof(decimal));
+            dt.Columns.Add("Fecha de Inicio", typeof(string));
+            dt.Columns.Add("Fecha de Salida", typeof(string));
+            dt.Columns.Add("Fecha de Entrega", typeof(string));
+            dt.Columns.Add("Fecha de Registro", typeof(string));
+            dt.Columns.Add("Usuario", typeof(string));
 
 
-        //     return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Traspasos.xlsx");
-        // }
-
-        // private DataTable GetTraspasosData()
-        // {
-        //     DataTable dt = new DataTable();
-        //     dt.TableName = "Traspasos";
-        //     dt.Columns.Add("Id", typeof(int));
-        //     dt.Columns.Add("Id Tipo-Traspaso", typeof(int));
-        //     dt.Columns.Add("Tipo-Traspaso", typeof(string));
-        //     dt.Columns.Add("IdAlmacen", typeof(int));
-        //     dt.Columns.Add("Almacen", typeof(string));
-        //     dt.Columns.Add("Fecha", typeof(string));
-        //     dt.Columns.Add("Estatus", typeof(int));
-        //     dt.Columns.Add("Id Usuario", typeof(string));
-        //     dt.Columns.Add("Usuario", typeof(string));
-
-
-        //     List<GetTraspasosModel> lista = this._traspasoService.GetTraspasos();
-        //     if (lista.Count > 0)
-        //     {
-        //         foreach(GetTraspasosModel traspaso in lista)
-        //         {
-        //             dt.Rows.Add(traspaso.Id, traspaso.IdTipoTraspaso, traspaso.TipoTraspaso, traspaso.IdAlmacen,traspaso.Almacen, traspaso.Fecha, traspaso.Estatus,traspaso.IdUsuario, traspaso.Usuario);
-        //         }
-        //     }
-        //     return dt;
-        // }
+            List<GetTraspasoModel> lista = this._traspasoService.GetTraspasos(req);
+            if (lista.Count > 0)
+            {
+                foreach(GetTraspasoModel traspaso in lista)
+                {
+                    dt.Rows.Add(traspaso.Id, traspaso.AlmacenEntrada, traspaso.AlmacenSalida, traspaso.EstatusTraspaso,traspaso.Insumo, traspaso.DescripcionInsumo,traspaso.Cantidad, traspaso.FechaInicio, traspaso.FechaSalida, traspaso.FechaEntrega, traspaso.FechaRegistro, traspaso.UsuarioRegistra);
+                }
+            }
+            return dt;
+        }
 
         [HttpPut("UpdateTraspasoEstatus")]
         public IActionResult UpdateTraspasoEstatus([FromBody] UpdateTraspasoEstatusModel req)
