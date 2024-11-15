@@ -75,6 +75,7 @@ namespace reportesApi
             services.AddSingleton<TiposMovimientoService>();
             services.AddSingleton<MovimientoService>();
             services.AddSingleton<RenglonMovimientoService>();
+            services.AddSingleton<EstatusTraspasoService>();
 
 
             services.AddCors();
