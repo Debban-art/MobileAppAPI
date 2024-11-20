@@ -75,7 +75,7 @@ namespace reportesApi.Services
 
             try
             {
-                DataSet ds = dac.Fill("sp_insert_personas", parametros);
+                DataSet ds = dac.Fill("sp_insert_persona", parametros);
                 mensaje = ds.Tables[0].AsEnumerable().Select(dataRow => dataRow["mensaje"].ToString()).ToList()[0];
             }
             catch (Exception ex)
