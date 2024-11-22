@@ -54,7 +54,7 @@ namespace reportesApi.Controllers
         }
 
         [HttpGet("GetTraspasos")]
-        public IActionResult GetAllTraspasos([FromQuery] GetTraspasoRequest req)
+        public IActionResult GetAllTraspasos()
         {
             var objectResponse = Helper.GetStructResponse();
             try
@@ -62,7 +62,7 @@ namespace reportesApi.Controllers
                 objectResponse.StatusCode = (int)HttpStatusCode.OK;
                 objectResponse.success = true;
                 objectResponse.message = "Traspasos obtenidos con éxito";
-                var resultado = _traspasoService.GetTraspasos(req);
+                var resultado = _traspasoService.GetTraspasos();
                 objectResponse.response = resultado;
             }
             catch(Exception ex)
@@ -117,7 +117,7 @@ namespace reportesApi.Controllers
             dt.Columns.Add("Usuario", typeof(string));
 
 
-            List<GetTraspasoModel> lista = this._traspasoService.GetTraspasos(req);
+            List<GetTraspasoModel> lista = this._traspasoService.GetTraspasosReporte(req);
             if (lista.Count > 0)
             {
                 foreach(GetTraspasoModel traspaso in lista)

@@ -33,7 +33,7 @@ namespace reportesApi.Services
 
             try
             {
-                dac.ExecuteNonQuery("sp_InsertRenglonTraspaso", parametros);
+                dac.ExecuteNonQuery("sp_insert_renglonTraspaso", parametros);
             }
             catch (Exception ex)
             {
@@ -51,7 +51,7 @@ namespace reportesApi.Services
 
             try
             {
-                DataSet ds = dac.Fill("sp_GetRenglonesTraspaso", parametros);
+                DataSet ds = dac.Fill("sp_get_renglonesTraspaso", parametros);
                 if(ds.Tables[0].Rows.Count > 0)
                 {
                     foreach (DataRow dr in ds.Tables[0].Rows)
@@ -93,7 +93,7 @@ namespace reportesApi.Services
 
             try
             {
-                dac.ExecuteNonQuery("sp_UpdateRenglonTraspaso", parametros);
+                dac.ExecuteNonQuery("sp_update_renglonTraspaso", parametros);
             }
             catch (Exception ex)
             {
@@ -111,7 +111,7 @@ namespace reportesApi.Services
 
             try
             {
-                DataSet ds = dac.Fill("sp_DeleteRenglonTraspaso", parametros);
+                DataSet ds = dac.Fill("sp_delete_renglonTraspaso", parametros);
             }
             catch (Exception ex)
             {

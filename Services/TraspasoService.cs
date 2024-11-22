@@ -33,7 +33,7 @@ namespace reportesApi.Services
 
             try
             {
-                DataSet ds = dac.Fill("sp_InsertTraspaso", parametros);
+                DataSet ds = dac.Fill("sp_insert_traspaso", parametros);
                 idTraspaso = int.Parse(ds.Tables[0].Rows[0]["IdTraspaso"].ToString());
             }
             catch (Exception ex)
@@ -45,19 +45,63 @@ namespace reportesApi.Services
             
         }
 
-        public List<GetTraspasoModel> GetTraspasos(GetTraspasoRequest req)
+        public List<GetTraspasoModel> GetTraspasosReporte(GetTraspasoRequest req)
         {
             ConexionDataAccess dac = new ConexionDataAccess(connection);
-            parametros = new ArrayList();
-            parametros.Add(new SqlParameter { ParameterName = "IdAlmacen", SqlDbType = SqlDbType.Int, Value = req.IdAlmacen  });
-            parametros.Add(new SqlParameter { ParameterName = "FechaInicio", SqlDbType = SqlDbType.Date, Value = req.FechaInicio  });
-            parametros.Add(new SqlParameter { ParameterName = "FechaFin", SqlDbType = SqlDbType.Date, Value = req.FechaFin  });
-            parametros.Add(new SqlParameter { ParameterName = "TipoTraspaso", SqlDbType = SqlDbType.Int, Value = req.TipoTraspaso  });
+                parametros = new ArrayList();
+                parametros.Add(new SqlParameter { ParameterName = "IdAlmacen", SqlDbType = SqlDbType.Int, Value = req.IdAlmacen  });
+                parametros.Add(new SqlParameter { ParameterName = "FechaInicio", SqlDbType = SqlDbType.Date, Value = req.FechaInicio  });
+                parametros.Add(new SqlParameter { ParameterName = "FechaFin", SqlDbType = SqlDbType.Date, Value = req.FechaFin  });
+                parametros.Add(new SqlParameter { ParameterName = "TipoTraspaso", SqlDbType = SqlDbType.Int, Value = req.TipoTraspaso  });
             List<GetTraspasoModel> lista = new List<GetTraspasoModel>();
 
             try
             {
-                DataSet ds = dac.Fill("sp_GetTraspasos", parametros);
+                DataSet ds = dac.Fill("sp_get_traspasos", parametros);
+                if(ds.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+                        lista.Add(new GetTraspasoModel
+                        {
+                            Id = int.Parse(dr["Id"].ToString()),
+                            IdAlmacenEntrada = int.Parse(dr["IdAlmacenEntrada"].ToString()),
+                            IdAlmacenSalida = int.Parse(dr["IdAlmacenSalida"].ToString()),
+                            AlmacenEntrada = dr["AlmacenEntrada"].ToString(),
+                            AlmacenSalida = dr["AlmacenSalida"].ToString(),
+                            IdEstatusTraspaso = int.Parse(dr["IdEstatusTraspaso"].ToString()),
+                            EstatusTraspaso = dr["EstatusTraspaso"].ToString(),
+                            Insumo = dr["Insumo"].ToString(),
+                            DescripcionInsumo = dr["DescripcionInsumo"].ToString(),
+                            Cantidad = decimal.Parse(dr["Cantidad"].ToString()),
+                            FechaInicio = dr["FechaInicio"].ToString(),
+                            FechaSalida = dr["FechaSalida"].ToString(),
+                            FechaEntrega = dr["FechaEntrega"].ToString(),
+                            FechaRegistro = dr["FechaRegistro"].ToString(),
+                            Estatus = int.Parse(dr["Estatus"].ToString()),
+                            IdUsuarioRegistra = int.Parse(dr["UsuarioRegistra"].ToString()),
+                            UsuarioRegistra = dr["Usuario"].ToString(),
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+
+            return lista;
+        }
+         public List<GetTraspasoModel> GetTraspasos()
+        {
+            ConexionDataAccess dac = new ConexionDataAccess(connection);
+                parametros = new ArrayList();
+                List<GetTraspasoModel> lista = new List<GetTraspasoModel>();
+
+            try
+            {
+                DataSet ds = dac.Fill("sp_get_traspasosNormal", parametros);
                 if(ds.Tables[0].Rows.Count > 0)
                 {
                     foreach (DataRow dr in ds.Tables[0].Rows)
@@ -107,7 +151,7 @@ namespace reportesApi.Services
 
             try
             {
-                dac.ExecuteNonQuery("sp_UpdateTraspaso", parametros);
+                dac.ExecuteNonQuery("sp_update_traspaso", parametros);
             }
             catch (Exception ex)
             {
@@ -128,7 +172,7 @@ namespace reportesApi.Services
 
             try
             {
-                dac.ExecuteNonQuery("sp_UpdateTraspasoEstatus", parametros);
+                dac.ExecuteNonQuery("sp_update_traspasoEstatus", parametros);
             }
             catch (Exception ex)
             {
@@ -146,7 +190,7 @@ namespace reportesApi.Services
 
             try
             {
-                DataSet ds = dac.Fill("sp_DeleteTraspaso", parametros);
+                DataSet ds = dac.Fill("sp_delete_traspaso", parametros);
             }
             catch (Exception ex)
             {

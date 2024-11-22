@@ -62,7 +62,6 @@ namespace reportesApi
             // Get Services LB
             services.AddSingleton<LoginService>();
             services.AddSingleton<PersonaService>();
-            services.AddSingleton<AlumnoService>();
             services.AddSingleton<ProveedorService>();
             services.AddSingleton<AlmacenService>();
             services.AddSingleton<InsumoService>();
@@ -76,6 +75,10 @@ namespace reportesApi
             services.AddSingleton<INV_TipoMovimientoService>();
             services.AddSingleton<INV_MovimientoService>();
             services.AddSingleton<INV_RenglonesMovimientoService>();
+            services.AddSingleton<TraspasoService>();
+            services.AddSingleton<RenglonTraspasoService>();
+
+
 
 
 
