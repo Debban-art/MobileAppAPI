@@ -75,10 +75,10 @@ namespace reportesApi.Controllers
             return new JsonResult(objectResponse);
         }
 
-        [HttpGet("ExportarExcelRecetas")]
-        public IActionResult ExportarExcel()
+        [HttpGet("ReporteExcelRecetas")]
+        public IActionResult ExportarExcel(string FechaInicio, string FechaFin)
         {
-            var data = GetRecetasData();
+            var data = GetRecetasData(FechaInicio, FechaFin);
 
             XLWorkbook wb = new XLWorkbook();
             MemoryStream ms = new MemoryStream();
@@ -90,24 +90,26 @@ namespace reportesApi.Controllers
             return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Recetas.xlsx");
         }
 
-        private DataTable GetRecetasData()
+        private DataTable GetRecetasData(string FechaInicio, string FechaFin)
         {
             DataTable dt = new DataTable();
             dt.TableName = "Recetas";
             dt.Columns.Add("Id", typeof(int));
             dt.Columns.Add("Nombre", typeof(string));
+            dt.Columns.Add("Insumo", typeof(string));
+            dt.Columns.Add("Cantidad", typeof(float));
             dt.Columns.Add("Fecha Creación", typeof(string));
             dt.Columns.Add("Estatus", typeof(int));
             dt.Columns.Add("Usuario Registra", typeof(string));
             dt.Columns.Add("Fecha Registro", typeof(string));
 
 
-            List<GetRecetasModel> lista = this._recetaService.GetRecetas();
+            List<GetReporteRecetasModel> lista = this._recetaService.GetReporteRecetas(FechaInicio, FechaFin);
             if (lista.Count > 0)
             {
-                foreach(GetRecetasModel receta in lista)
+                foreach(GetReporteRecetasModel receta in lista)
                 {
-                    dt.Rows.Add(receta.Id, receta.Nombre, receta.Fecha_Creacion, receta.Estatus, receta.Usuario_Registra, receta.Fecha_Registro);
+                    dt.Rows.Add(receta.Id, receta.Nombre, receta.Insumo, receta.Cantidad, receta.Fecha_Creacion, receta.Estatus, receta.Usuario_Registra, receta.Fecha_Registro);
                 }
             }
             return dt;
