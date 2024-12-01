@@ -79,15 +79,24 @@ namespace reportesApi.Controllers
         public IActionResult ExportarExcel(string FechaInicio, string FechaFin)
         {
             var data = GetRecetasData(FechaInicio, FechaFin);
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var ws = wb.Worksheets.Add("Recetas");
+                string titulo = $"Recetas creadas {FechaInicio} - {FechaFin} ";
+                ws.Cell(1, 1).Value = titulo;
 
-            XLWorkbook wb = new XLWorkbook();
-            MemoryStream ms = new MemoryStream();
+                ws.Range(1,1,1, data.Columns.Count).Merge();
+                ws.Cell(1, 1).Style.Font.Bold = true;
+                ws.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
-            wb.AddWorksheet(data, "Recetas").Columns().AdjustToContents();
-            wb.SaveAs(ms);
+                ws.Cell(2, 1).InsertTable(data);
+                ws.Columns().AdjustToContents();
 
+                MemoryStream ms = new MemoryStream();
+                wb.SaveAs(ms);
+                return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Reporte_Recetas.xlsx");
+            }
 
-            return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Recetas.xlsx");
         }
 
         private DataTable GetRecetasData(string FechaInicio, string FechaFin)
