@@ -39,6 +39,7 @@ namespace reportesApi.Controllers
         [HttpPost("InsertDetalleReceta")]
         public IActionResult InsertDetalleReceta([FromBody] InsertDetalleRecetaModel req)
         {
+            
             var objectResponse = Helper.GetStructResponse();
             try
             {
@@ -83,15 +84,24 @@ namespace reportesApi.Controllers
         public IActionResult ExportarExcel([FromQuery] int IdReceta)
         {
             var data = GetDetallesRecetasData(IdReceta);
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var ws = wb.Worksheets.Add("Detalle_Receta");
+                string titulo = $"Detalles de Receta #{IdReceta}";
+                ws.Cell(1, 1).Value = titulo;
 
-            XLWorkbook wb = new XLWorkbook();
-            MemoryStream ms = new MemoryStream();
+                ws.Range(1,1,1, data.Columns.Count).Merge();
+                ws.Cell(1, 1).Style.Font.Bold = true;
+                ws.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
-            wb.AddWorksheet(data, "DetallesReceta").Columns().AdjustToContents();
-            wb.SaveAs(ms);
+                ws.Cell(2, 1).InsertTable(data);
+                ws.Columns().AdjustToContents();
 
+                MemoryStream ms = new MemoryStream();
+                wb.SaveAs(ms);
+                return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",$"Detalles_Receta_{IdReceta}.xlsx");
 
-            return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","DetallesReceta.xlsx");
+            }
         }
 
         private DataTable GetDetallesRecetasData(int IdReceta)
