@@ -13,6 +13,16 @@ namespace reportesApi.Models
         public string UsuarioRegistra {get; set;}
     }
 
+    public class GetInsumosTraspasoModel{
+        public int Id { get; set; }
+        public string Insumo {get; set;}
+        public float Cantidad {get; set;}
+        public string FechaMovimiento {get; set;}
+        public string UsuarioRegistra {get; set;}
+        public string FechaRegistro {get; set;}
+        public int Estatus {get; set;}
+    }
+
     public class InsertRenglonTraspasoModel
     {
         public int IdTraspaso { get; set; }
@@ -24,6 +34,7 @@ namespace reportesApi.Models
     public class UpdateRenglonTraspasoModel
     {
         public int Id { get; set; }
+        public int IdTraspaso { get; set; }
         public string Insumo {get; set;}
         public decimal Cantidad {get; set;}
         public int Estatus {get; set;}
