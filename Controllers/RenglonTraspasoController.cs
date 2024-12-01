@@ -82,14 +82,23 @@ namespace reportesApi.Controllers
         {
             var data = GetRenglonTraspasosData(1,IdAlmacen, FechaInicio, FechaFin);
 
-            XLWorkbook wb = new XLWorkbook();
-            MemoryStream ms = new MemoryStream();
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var ws = wb.Worksheets.Add("CodigosTraspasosSalidaAlmacen" + IdAlmacen);
+                string titulo = $"Códigos en Traspasos Salida del Almacén #{IdAlmacen} {FechaInicio} - {FechaFin} ";
+                ws.Cell(1, 1).Value = titulo;
 
-            wb.AddWorksheet(data, "Insumos_Traspasos_Salida").Columns().AdjustToContents();
-            wb.SaveAs(ms);
+                ws.Range(1,1,1, data.Columns.Count).Merge();
+                ws.Cell(1, 1).Style.Font.Bold = true;
+                ws.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
+                ws.Cell(2, 1).InsertTable(data);
+                ws.Columns().AdjustToContents();
 
-            return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Insumos_Traspasos_Salida.xlsx");
+                MemoryStream ms = new MemoryStream();
+                wb.SaveAs(ms);
+                return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",$"Insumos_Traspasos_Salida_AlmacenNo{IdAlmacen}.xlsx");
+            }
         }
 
         
@@ -98,14 +107,23 @@ namespace reportesApi.Controllers
         {
             var data = GetRenglonTraspasosData(2,IdAlmacen, FechaInicio, FechaFin);
 
-            XLWorkbook wb = new XLWorkbook();
-            MemoryStream ms = new MemoryStream();
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var ws = wb.Worksheets.Add("CodigosTraspasosEntradaAlmacen" + IdAlmacen);
+                string titulo = $"Códigos en Traspasos Entrada del Almacén #{IdAlmacen} {FechaInicio} - {FechaFin} ";
+                ws.Cell(1, 1).Value = titulo;
 
-            wb.AddWorksheet(data, "Insumos_Traspasos_Entrada").Columns().AdjustToContents();
-            wb.SaveAs(ms);
+                ws.Range(1,1,1, data.Columns.Count).Merge();
+                ws.Cell(1, 1).Style.Font.Bold = true;
+                ws.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
+                ws.Cell(2, 1).InsertTable(data);
+                ws.Columns().AdjustToContents();
 
-            return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Insumos_Traspasos_Entradas.xlsx");
+                MemoryStream ms = new MemoryStream();
+                wb.SaveAs(ms);
+                return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",$"Insumos_Traspasos_Entrada_AlmacenNo{IdAlmacen}.xlsx");
+            }
         }
 
         private DataTable GetRenglonTraspasosData(int TipoTraspaso,int IdAlmacen, string FechaInicio, string FechaFin)
