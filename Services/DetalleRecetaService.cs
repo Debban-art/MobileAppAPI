@@ -59,7 +59,7 @@ namespace reportesApi.Services
 
             try
             {
-                DataSet ds = dac.Fill("sp_GetDetallesReceta", parametros);
+                DataSet ds = dac.Fill("sp_GetDetallesRecetaById", parametros);
                 if(ds.Tables[0].Rows.Count > 0)
                 {
                     foreach(DataRow dr in ds.Tables[0].Rows)
@@ -68,6 +68,7 @@ namespace reportesApi.Services
                             Id = int.Parse(dr["Id"].ToString()),
                             IdReceta = int.Parse(dr["IdReceta"].ToString()),
                             Receta = dr["Receta"].ToString(),
+                            CodigoInsumo = dr["CodigoInsumo"].ToString(),
                             Insumo = dr["Insumo"].ToString(),
                             Cantidad = float.Parse(dr["Cantidad"].ToString()),
                             UsuarioRegistra = dr["UsuarioRegistra"].ToString(),

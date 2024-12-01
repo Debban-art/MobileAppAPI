@@ -66,7 +66,7 @@ namespace reportesApi.Controllers
             {
                 objectResponse.StatusCode = (int)HttpStatusCode.OK;
                 objectResponse.success = true;
-                objectResponse.message = "Detalle-Receta caragdos exitósamente";
+                objectResponse.message = "Detalles-Receta caragdos exitósamente";
                 objectResponse.response = _detalleRecetaService.GetDetallesReceta(IdReceta);
             }
             catch (Exception ex)
@@ -79,7 +79,7 @@ namespace reportesApi.Controllers
             return new JsonResult(objectResponse);
         }
 
-        [HttpGet("ExportarExcelDetallesReceta")]
+        [HttpGet("ReporteExcelDetallesReceta")]
         public IActionResult ExportarExcel([FromQuery] int IdReceta)
         {
             var data = GetDetallesRecetasData(IdReceta);
@@ -99,7 +99,7 @@ namespace reportesApi.Controllers
             DataTable dt = new DataTable();
             dt.TableName = "DetallesRecetas";
             dt.Columns.Add("Id", typeof(int));
-            dt.Columns.Add("Receta", typeof(string));
+            dt.Columns.Add("Código Insumo", typeof(string));
             dt.Columns.Add("Insumo", typeof(string));
             dt.Columns.Add("Cantidad", typeof(float));
             dt.Columns.Add("Estatus", typeof(int));
@@ -112,7 +112,7 @@ namespace reportesApi.Controllers
             {
                 foreach(GetDetallesRecetaModel detallesReceta in lista)
                 {
-                    dt.Rows.Add(detallesReceta.Id, detallesReceta.Receta, detallesReceta.Insumo,detallesReceta.Cantidad, detallesReceta.Estatus, detallesReceta.UsuarioRegistra, detallesReceta.FechaRegistro);
+                    dt.Rows.Add(detallesReceta.Id,detallesReceta.CodigoInsumo, detallesReceta.Insumo,detallesReceta.Cantidad, detallesReceta.Estatus, detallesReceta.UsuarioRegistra, detallesReceta.FechaRegistro);
                 }
             }
             return dt;

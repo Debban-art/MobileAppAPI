@@ -13,6 +13,7 @@ namespace  reportesApi.Models
         public int Id {get; set;}
         public int IdReceta {get; set;}
         public string Receta {get; set;}
+        public string CodigoInsumo {get; set;}
         public string Insumo {get; set;}
         public float Cantidad {get; set;}
         public int Estatus {get; set;}
