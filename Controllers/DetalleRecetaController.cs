@@ -41,7 +41,6 @@ namespace reportesApi.Controllers
         [HttpPost("InsertDetalleReceta")]
         public IActionResult InsertDetalleReceta([FromBody] InsertDetalleRecetaModel req )
         {
-            
             var objectResponse = Helper.GetStructResponse();
             try
             {
@@ -90,55 +89,6 @@ namespace reportesApi.Controllers
 
             return new JsonResult(objectResponse);
         }
-
-        [HttpGet("ReporteExcelDetallesReceta")]
-        public IActionResult ExportarExcel([FromQuery] int IdReceta)
-        {
-            var data = GetDetallesRecetasData(IdReceta);
-            using (XLWorkbook wb = new XLWorkbook())
-            {
-                var ws = wb.Worksheets.Add("Detalle_Receta");
-                string titulo = $"Detalles de Receta #{IdReceta}";
-                ws.Cell(1, 1).Value = titulo;
-
-                ws.Range(1,1,1, data.Columns.Count).Merge();
-                ws.Cell(1, 1).Style.Font.Bold = true;
-                ws.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-
-                ws.Cell(2, 1).InsertTable(data);
-                ws.Columns().AdjustToContents();
-
-                MemoryStream ms = new MemoryStream();
-                wb.SaveAs(ms);
-                return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",$"Detalles_Receta_{IdReceta}.xlsx");
-
-            }
-        }
-
-        private DataTable GetDetallesRecetasData(int IdReceta)
-        {
-            DataTable dt = new DataTable();
-            dt.TableName = "DetallesRecetas";
-            dt.Columns.Add("Id", typeof(int));
-            dt.Columns.Add("Código Insumo", typeof(string));
-            dt.Columns.Add("Insumo", typeof(string));
-            dt.Columns.Add("Cantidad", typeof(float));
-            dt.Columns.Add("Estatus", typeof(int));
-            dt.Columns.Add("Usuario Registra", typeof(string));
-            dt.Columns.Add("Fecha Registro", typeof(string));
-
-
-            List<GetDetallesRecetaModel> lista = this._detalleRecetaService.GetDetallesReceta(IdReceta);
-            if (lista.Count > 0)
-            {
-                foreach(GetDetallesRecetaModel detallesReceta in lista)
-                {
-                    dt.Rows.Add(detallesReceta.Id,detallesReceta.CodigoInsumo, detallesReceta.Insumo,detallesReceta.Cantidad, detallesReceta.Estatus, detallesReceta.UsuarioRegistra, detallesReceta.FechaRegistro);
-                }
-            }
-            return dt;
-        }
-
 
         [HttpPut("UpdateDetalleReceta")]
         public IActionResult UpdateDetalleReceta([FromBody] UpdateDetalleRecetaModel req )

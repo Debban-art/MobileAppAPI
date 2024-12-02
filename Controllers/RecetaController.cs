@@ -93,51 +93,38 @@ namespace reportesApi.Controllers
             return new JsonResult(objectResponse);
         }
 
-        [HttpGet("ReporteExcelRecetas")]
-        public IActionResult ExportarExcel(string FechaInicio, string FechaFin)
+        [HttpGet("ExportarExcel")]
+        public IActionResult ExportarExcel()
         {
-            var data = GetRecetasData(FechaInicio, FechaFin);
-            using (XLWorkbook wb = new XLWorkbook())
-            {
-                var ws = wb.Worksheets.Add("Recetas");
-                string titulo = $"Recetas creadas {FechaInicio} - {FechaFin} ";
-                ws.Cell(1, 1).Value = titulo;
+            var data = GetRecetasData();
 
-                ws.Range(1,1,1, data.Columns.Count).Merge();
-                ws.Cell(1, 1).Style.Font.Bold = true;
-                ws.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            XLWorkbook wb = new XLWorkbook();
+            MemoryStream ms = new MemoryStream();
 
-                ws.Cell(2, 1).InsertTable(data);
-                ws.Columns().AdjustToContents();
+            wb.AddWorksheet(data, "RecetaService").Columns().AdjustToContents();
+            wb.SaveAs(ms);
 
-                MemoryStream ms = new MemoryStream();
-                wb.SaveAs(ms);
-                return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Reporte_Recetas.xlsx");
-            }
-
+            return File(ms.ToArray(),"aplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Recetas.xlsx");
         }
 
-        private DataTable GetRecetasData(string FechaInicio, string FechaFin)
+        private DataTable GetRecetasData()
         {
             DataTable dt = new DataTable();
             dt.TableName = "Recetas";
-            dt.Columns.Add("Id", typeof(int));
-            dt.Columns.Add("Nombre", typeof(string));
-            dt.Columns.Add("Insumo", typeof(string));
-            dt.Columns.Add("Cantidad", typeof(float));
-            dt.Columns.Add("Fecha Creación", typeof(string));
-            dt.Columns.Add("Estatus", typeof(int));
-            dt.Columns.Add("Usuario Registra", typeof(string));
-            dt.Columns.Add("Fecha Registro", typeof(string));
+            dt.Columns.Add("Id",typeof(int));
+            dt.Columns.Add("Nombre",typeof(string));
+            dt.Columns.Add("Estatus",typeof(int));
+            dt.Columns.Add("FechaCreacion",typeof(string));
+            dt.Columns.Add("UsuarioRegistra",typeof(string));
+            dt.Columns.Add("FechaRegistro",typeof(string));
 
-
-            List<GetReporteRecetasModel> lista = this._recetaService.GetReporteRecetas(FechaInicio, FechaFin);
+            List <GetRecetaModel> lista = this._RecetaService.GetRecetas();
             if (lista.Count > 0)
             {
-                foreach(GetReporteRecetasModel receta in lista)
+                foreach (GetRecetaModel Receta in lista)
                 {
-                    dt.Rows.Add(receta.Id, receta.Nombre, receta.Insumo, receta.Cantidad, receta.Fecha_Creacion, receta.Estatus, receta.Usuario_Registra, receta.Fecha_Registro);
-                }
+                    dt.Rows.Add(Receta.Id, Receta.Nombre, Receta.Estatus, Receta.FechaCreacion, Receta.UsuarioRegistra, Receta.FechaRegistro);
+                } 
             }
             return dt;
         }

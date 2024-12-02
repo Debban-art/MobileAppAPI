@@ -12,7 +12,6 @@ using System.IO;
 using System.Data;
 using System.Collections.Generic;
 using DocumentFormat.OpenXml.Office2010.Excel;
-using System.ComponentModel.DataAnnotations;
 
 namespace reportesApi.Controllers
 {
@@ -77,78 +76,46 @@ namespace reportesApi.Controllers
             return new JsonResult(objectResponse);
         }
 
-        [HttpGet("ReporteExcelInsumosTraspasoSalida")]
-        public IActionResult GetInsumosTraspasoSalida([FromQuery, Required] int IdAlmacen, [FromQuery, Required]string FechaInicio, [FromQuery, Required]string FechaFin)
-        {
-            var data = GetRenglonTraspasosData(1,IdAlmacen, FechaInicio, FechaFin);
+        // [HttpGet("ExportarExcelRenglonTraspasos")]
+        // public IActionResult ExportarExcel([FromQuery] int IdTraspaso)
+        // {
+        //     var data = GetRenglonTraspasosData(IdTraspaso);
 
-            using (XLWorkbook wb = new XLWorkbook())
-            {
-                var ws = wb.Worksheets.Add("CodigosTraspasosSalidaAlmacen" + IdAlmacen);
-                string titulo = $"Códigos en Traspasos Salida del Almacén #{IdAlmacen} {FechaInicio} - {FechaFin} ";
-                ws.Cell(1, 1).Value = titulo;
+        //     XLWorkbook wb = new XLWorkbook();
+        //     MemoryStream ms = new MemoryStream();
 
-                ws.Range(1,1,1, data.Columns.Count).Merge();
-                ws.Cell(1, 1).Style.Font.Bold = true;
-                ws.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+        //     wb.AddWorksheet(data, "RenglonTraspasos").Columns().AdjustToContents();
+        //     wb.SaveAs(ms);
 
-                ws.Cell(2, 1).InsertTable(data);
-                ws.Columns().AdjustToContents();
 
-                MemoryStream ms = new MemoryStream();
-                wb.SaveAs(ms);
-                return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",$"Insumos_Traspasos_Salida_AlmacenNo{IdAlmacen}.xlsx");
-            }
-        }
+        //     return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","RenglonTraspasos.xlsx");
+        // }
 
-        
-        [HttpGet("ReporteExcelInsumosTraspasoEntrada")]
-        public IActionResult GetInsumosTraspasoEntrada([FromQuery, Required] int IdAlmacen, [FromQuery, Required]string FechaInicio, [FromQuery, Required]string FechaFin)
-        {
-            var data = GetRenglonTraspasosData(2,IdAlmacen, FechaInicio, FechaFin);
+        // private DataTable GetRenglonTraspasosData(int IdTraspaso)
+        // {
+        //     DataTable dt = new DataTable();
+        //     dt.TableName = "RenglonTraspasos";
+        //     dt.Columns.Add("Id", typeof(int));
+        //     dt.Columns.Add("Insumo", typeof(string));
+        //     dt.Columns.Add("Descripción Insumo", typeof(string));
+        //     dt.Columns.Add("Cantidad", typeof(decimal));
+        //     dt.Columns.Add("Costo", typeof(decimal));
+        //     dt.Columns.Add("Estatus", typeof(int));
+        //     dt.Columns.Add("Fecha Registro", typeof(string));
+        //     dt.Columns.Add("Id Usuario Registra", typeof(int));
+        //     dt.Columns.Add("Usuario Registra", typeof(string));
 
-            using (XLWorkbook wb = new XLWorkbook())
-            {
-                var ws = wb.Worksheets.Add("CodigosTraspasosEntradaAlmacen" + IdAlmacen);
-                string titulo = $"Códigos en Traspasos Entrada del Almacén #{IdAlmacen} {FechaInicio} - {FechaFin} ";
-                ws.Cell(1, 1).Value = titulo;
 
-                ws.Range(1,1,1, data.Columns.Count).Merge();
-                ws.Cell(1, 1).Style.Font.Bold = true;
-                ws.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-
-                ws.Cell(2, 1).InsertTable(data);
-                ws.Columns().AdjustToContents();
-
-                MemoryStream ms = new MemoryStream();
-                wb.SaveAs(ms);
-                return File(ms.ToArray(),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",$"Insumos_Traspasos_Entrada_AlmacenNo{IdAlmacen}.xlsx");
-            }
-        }
-
-        private DataTable GetRenglonTraspasosData(int TipoTraspaso,int IdAlmacen, string FechaInicio, string FechaFin)
-        {
-            DataTable dt = new DataTable();
-            dt.TableName = "Insumos traspasos";
-            dt.Columns.Add("Id", typeof(int));
-            dt.Columns.Add("Insumo", typeof(string));
-            dt.Columns.Add("Cantidad", typeof(float));
-            dt.Columns.Add( TipoTraspaso == 1 ? "Fecha Salida" : "Fecha Entrega", typeof(string));
-            dt.Columns.Add("Fecha Registro", typeof(string));
-            dt.Columns.Add("Usuario Registra", typeof(string));
-            dt.Columns.Add("Estatus", typeof(int));
-
-            var serviceCall = TipoTraspaso == 1 ? this._renglonTraspasoService.GetInsumosTraspasoSalida(IdAlmacen, FechaInicio, FechaFin) : this._renglonTraspasoService.GetInsumosTraspasoEntrada(IdAlmacen, FechaInicio, FechaFin);
-            List<GetInsumosTraspasoModel> lista = serviceCall;
-            if (lista.Count > 0)
-            {
-                foreach(GetInsumosTraspasoModel renglonTraspaso in lista)
-                {
-                    dt.Rows.Add(renglonTraspaso.Id, renglonTraspaso.Insumo, renglonTraspaso.Cantidad,renglonTraspaso.FechaMovimiento, renglonTraspaso.FechaRegistro, renglonTraspaso.UsuarioRegistra,renglonTraspaso.Estatus);
-                }
-            }
-            return dt;
-        }
+        //     List<GetRenglonesTraspasoModel> lista = this._renglonTraspasoService.GetRenglonesTraspaso(IdTraspaso);
+        //     if (lista.Count > 0)
+        //     {
+        //         foreach(GetRenglonesTraspasoModel renglonTraspaso in lista)
+        //         {
+        //             dt.Rows.Add(renglonTraspaso.Id, renglonTraspaso.Insumo, renglonTraspaso.DescripcionInsumo, renglonTraspaso.Cantidad,renglonTraspaso.Costo, renglonTraspaso.Estatus, renglonTraspaso.FechaRegistro,renglonTraspaso.IdUsuarioRegistra, renglonTraspaso.UsuarioRegistra);
+        //         }
+        //     }
+        //     return dt;
+        // }
 
         [HttpPut("UpdateRenglonTraspaso")]
         public IActionResult UpdateRenglonTraspaso([FromBody] UpdateRenglonTraspasoModel req)
