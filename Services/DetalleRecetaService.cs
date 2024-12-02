@@ -52,6 +52,43 @@ namespace reportesApi.Services
                         UsuarioRegistra = dataRow["UsuarioRegistra"].ToString(),
                         FechaRegistro= dataRow["FechaRegistro"].ToString()
                     }).ToList();
+                dac.ExecuteNonQuery("sp_InsertDetalleReceta", parametros);
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+        }
+
+        public List<GetDetallesRecetaModel> GetDetallesReceta(int IdReceta)
+        {
+            ConexionDataAccess dac = new ConexionDataAccess(connection);
+            List<GetDetallesRecetaModel> lista = new List<GetDetallesRecetaModel>();
+            parametros = new ArrayList();
+
+            parametros.Add(new SqlParameter {ParameterName = "IdReceta", SqlDbType = SqlDbType.Int, Value = IdReceta});
+
+            try
+            {
+                DataSet ds = dac.Fill("sp_GetDetallesRecetaById", parametros);
+                if(ds.Tables[0].Rows.Count > 0)
+                {
+                    foreach(DataRow dr in ds.Tables[0].Rows)
+                    {
+                        lista.Add(new GetDetallesRecetaModel{
+                            Id = int.Parse(dr["Id"].ToString()),
+                            IdReceta = int.Parse(dr["IdReceta"].ToString()),
+                            Receta = dr["Receta"].ToString(),
+                            CodigoInsumo = dr["CodigoInsumo"].ToString(),
+                            Insumo = dr["Insumo"].ToString(),
+                            Cantidad = float.Parse(dr["Cantidad"].ToString()),
+                            UsuarioRegistra = dr["UsuarioRegistra"].ToString(),
+                            FechaRegistro = dr["FechaRegistro"].ToString(),
+                            Estatus = int.Parse(dr["Estatus"].ToString())
+                        });
+                    }
                 }
             }
             catch (Exception ex)
