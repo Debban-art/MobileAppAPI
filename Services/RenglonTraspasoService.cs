@@ -79,7 +79,44 @@ namespace reportesApi.Services
 
             return lista;
         }
+         public List<GetInsumosTraspasoModel> GetInsumosTraspasoEntrada(int IdAlmacen, string FechaInicio, string FechaFin)
+        {
+            ConexionDataAccess dac = new ConexionDataAccess(connection);
+            parametros = new ArrayList();
+            parametros.Add(new SqlParameter { ParameterName = "IdAlmacen", SqlDbType = SqlDbType.Int, Value = IdAlmacen  });
+            parametros.Add(new SqlParameter { ParameterName = "FechaInicio", SqlDbType = SqlDbType.Date, Value = FechaInicio  });
+            parametros.Add(new SqlParameter { ParameterName = "FechaFin", SqlDbType = SqlDbType.Date, Value = FechaFin  });
+            List<GetInsumosTraspasoModel> lista = new List<GetInsumosTraspasoModel>();
 
+            try
+            {
+                DataSet ds = dac.Fill("sp_GetReporteInsumosTraspasosEntrada", parametros);
+                if(ds.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+                        lista.Add(new GetInsumosTraspasoModel
+                        {
+                            Id = int.Parse(dr["Id"].ToString()),
+                            Insumo = dr["Insumo"].ToString(),
+                            Cantidad = float.Parse(dr["Cantidad"].ToString()),
+                            FechaMovimiento = dr["FechaEntrega"].ToString(),
+                            Estatus = int.Parse(dr["Estatus"].ToString()),
+                            UsuarioRegistra = dr["UsuarioRegistra"].ToString(),
+                            FechaRegistro = dr["FechaRegistro"].ToString()
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+            return lista;
+
+        }
+        
         public void UpdateRenglonTraspaso(UpdateRenglonTraspasoModel renglonTraspaso)
         {
             ConexionDataAccess dac = new ConexionDataAccess(connection);
