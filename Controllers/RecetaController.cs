@@ -2,19 +2,17 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using reportesApi.Services;
 using reportesApi.Utilities;
-using Microsoft.AspNetCore.Authorization;
 using reportesApi.Models;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using reportesApi.Helpers;
-using Newtonsoft.Json;
-using System.IO;
-using OfficeOpenXml;
-using OfficeOpenXml.Style;
 using Microsoft.AspNetCore.Hosting;
+using ClosedXML.Excel;
+using System.IO;
 using System.Data;
 using System.Collections.Generic;
-using ClosedXML.Excel;
+
+
 
 namespace reportesApi.Controllers
 {
@@ -130,7 +128,7 @@ namespace reportesApi.Controllers
             dt.Columns.Add("Usuario Registra", typeof(string));
             dt.Columns.Add("Fecha Registro", typeof(string));
 
-            List<GetReporteRecetasModel> lista = this._recetaService.GetReporteRecetas(FechaInicio, FechaFin);
+            List<GetReporteRecetasModel> lista = this._RecetaService.GetReporteRecetas(FechaInicio, FechaFin);
             if (lista.Count > 0)
             {
                 foreach(GetReporteRecetasModel receta in lista)

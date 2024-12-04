@@ -12,6 +12,8 @@ using System.IO;
 using System.Data;
 using System.Collections.Generic;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace reportesApi.Controllers
 {

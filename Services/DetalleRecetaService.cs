@@ -46,6 +46,7 @@ namespace reportesApi.Services
                     .Select(dataRow => new GetDetalleRecetaModel {
                         Id = int.Parse(dataRow["Id"].ToString()),
                         IdReceta = int.Parse(dataRow["IdReceta"].ToString()),
+                        CodigoInsumo = dataRow["CodigoInsumo"].ToString(),
                         Insumo = dataRow["Insumo"].ToString(),
                         Cantidad = float.Parse(dataRow["Cantidad"].ToString()),
                         Estatus = int.Parse(dataRow["Estatus"].ToString()),

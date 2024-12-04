@@ -12,6 +12,10 @@ using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Microsoft.AspNetCore.Hosting;
+using ClosedXML.Excel;
+using System.Data;
+using System.Collections.Generic;
+
 
 namespace reportesApi.Controllers
 {
@@ -125,10 +129,10 @@ namespace reportesApi.Controllers
             dt.Columns.Add("Usuario Registra", typeof(string));
             dt.Columns.Add("Fecha Registro", typeof(string));
 
-            List<GetDetallesRecetaModel> lista = this._detalleRecetaService.GetDetallesReceta(IdReceta);
+            List<GetDetalleRecetaModel> lista = this._DetalleRecetaService.GetDetalleRecetas(IdReceta);
             if (lista.Count > 0)
             {
-                foreach(GetDetallesRecetaModel detallesReceta in lista)
+                foreach(GetDetalleRecetaModel detallesReceta in lista)
                 {
                     dt.Rows.Add(detallesReceta.Id,detallesReceta.CodigoInsumo, detallesReceta.Insumo,detallesReceta.Cantidad, detallesReceta.Estatus, detallesReceta.UsuarioRegistra, detallesReceta.FechaRegistro);
                 }
